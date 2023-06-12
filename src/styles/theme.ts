@@ -18,8 +18,8 @@ export default {
       medium: "1.6rem",
       large: "1.8rem",
       xlarge: "2.0rem",
-      xxlarge: "2.8rem",
-      huge: "5.2rem",
+      xxlarge: "2.2rem",
+      huge: "2.4rem",
     },
   },
   colors: {

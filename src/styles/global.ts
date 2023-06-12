@@ -32,11 +32,18 @@ const GlobalStyles = createGlobalStyle`
       font-size: ${theme.font.sizes.medium};
       color: ${theme.colors.black};
     }
-  `}
 
-  body {
-    font-family: 'Poppins', sans-serif;
-  }
+    h1 {
+      font-size: ${theme.font.sizes.xxlarge};
+      font-weight: 500;
+    }
+
+    h3 {
+      font-weight: 400;
+      font-size: 18px;
+      color: ${theme.colors.gray};
+    }
+  `}
 `;
 
 export default GlobalStyles;

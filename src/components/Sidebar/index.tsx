@@ -14,11 +14,11 @@ const Sidebar = () => (
     <Logo />
 
     <S.List>
-      <S.Item>
+      <S.Item active>
         <Home2 />
         <p>Início</p>
       </S.Item>
-      <S.Item active>
+      <S.Item>
         <Scan />
         <p>Dashboard</p>
       </S.Item>
