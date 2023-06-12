@@ -40,7 +40,7 @@ const GlobalStyles = createGlobalStyle`
 
     h3 {
       font-weight: 400;
-      font-size: 18px;
+      font-size: ${theme.font.sizes.medium};
       color: ${theme.colors.gray};
     }
   `}

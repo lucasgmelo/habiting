@@ -9,7 +9,7 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <Head>
-        <title>Habiting</title>
+        <title>habiting</title>
         <link rel="shortcut icon" href="/img/leaf-fill.svg" />
         <link rel="apple-touch-icon" href="/img/leaf-fill.svg" />
         <link rel="manifest" href="/manifest.json" />
