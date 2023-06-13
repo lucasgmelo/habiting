@@ -57,3 +57,22 @@ export const Button = styled.button`
   right: 16px;
   top: 16px;
 `;
+
+export const Done = styled.div`
+  color: ${({ theme }) => theme.colors.darkDarkPrimary};
+  background: ${({ theme }) => theme.colors.cleanPrimary};
+  font-size: ${({ theme }) => theme.font.sizes.xsmall};
+
+  font-family: "Inter", sans-serif;
+
+  width: fit-content;
+
+  padding: 8px;
+  border-radius: 5px;
+
+  position: absolute;
+  right: 16px;
+  top: 16px;
+
+  box-shadow: ${({ theme }) => theme.shadows.main};
+`;

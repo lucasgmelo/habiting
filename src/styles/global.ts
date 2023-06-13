@@ -34,7 +34,7 @@ const GlobalStyles = createGlobalStyle`
     }
 
     h1 {
-      font-size: ${theme.font.sizes.xxlarge};
+      font-size: ${theme.font.sizes.large};
       font-weight: 500;
     }
 

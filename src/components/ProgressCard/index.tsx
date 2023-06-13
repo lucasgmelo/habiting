@@ -21,7 +21,11 @@ const ProgressCard: FC<ProgressCardI> = ({
     <S.Progress>
       {progress}/{total}
     </S.Progress>
-    <S.Button>{buttonText}</S.Button>
+    {progressPercent === "100" ? (
+      <S.Done>Concluído</S.Done>
+    ) : (
+      <S.Button>{buttonText}</S.Button>
+    )}
   </S.Wrapper>
 );
 
