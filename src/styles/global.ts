@@ -34,8 +34,14 @@ const GlobalStyles = createGlobalStyle`
     }
 
     h1 {
-      font-size: ${theme.font.sizes.large};
+      font-size: ${theme.font.sizes.xlarge};
       font-weight: 500;
+    }
+
+    h2 {
+      font-weight: 400;
+      font-size: ${theme.font.sizes.large};
+      color: ${theme.colors.gray};
     }
 
     h3 {
