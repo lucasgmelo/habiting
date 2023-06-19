@@ -30,7 +30,7 @@ export const Grid = styled.div`
 export const WidgetGrid = styled.div`
   display: grid;
   grid-gap: 24px;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 1.3fr 1fr 1fr;
 
   margin-top: 48px;
 `;

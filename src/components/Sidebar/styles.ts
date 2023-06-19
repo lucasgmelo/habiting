@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import Link from "next/link";
 
 export const Wrapper = styled.nav`
   width: 300px;
@@ -26,6 +27,9 @@ export const List = styled.ul`
 
 export const Item = styled.li<{ active?: boolean }>`
   height: 48px;
+  text-decoration: none;
+
+  display: flex;
 
   cursor: pointer;
 
