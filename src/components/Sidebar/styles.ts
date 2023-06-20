@@ -1,5 +1,4 @@
 import styled, { css } from "styled-components";
-import Link from "next/link";
 
 export const Wrapper = styled.nav`
   width: 300px;
@@ -26,23 +25,24 @@ export const List = styled.ul`
 `;
 
 export const Item = styled.li<{ active?: boolean }>`
-  height: 48px;
   text-decoration: none;
+  border-radius: 5px;
 
   display: flex;
 
   cursor: pointer;
 
   & + li {
-    margin-top: 32px;
+    margin-top: 24px;
   }
 
   font-size: ${({ theme }) => theme.font.sizes.medium};
+  background: ${({ active, theme }) => active && theme.colors.mainBg};
 
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 0 16px;
+  padding: 20px 16px;
 
   svg {
     width: 24px;
@@ -59,7 +59,7 @@ export const Item = styled.li<{ active?: boolean }>`
     active &&
     css`
       p {
-        font-weight: 500;
+        font-weight: 600;
         color: ${theme.colors.darkPrimary};
       }
 

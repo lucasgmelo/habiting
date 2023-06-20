@@ -1,3 +1,4 @@
+import CreateButton from "components/CreateButton";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { ThemeProvider } from "styled-components";
@@ -21,6 +22,7 @@ function App({ Component, pageProps }: AppProps) {
       </Head>
       <GlobalStyles />
       <Component {...pageProps} />
+      <CreateButton />
     </ThemeProvider>
   );
 }
