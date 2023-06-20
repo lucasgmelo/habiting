@@ -29,7 +29,7 @@ export interface TrackI {
     currentToday: number;
     current: number;
     total: number;
-    doneToday: boolean;
+    totalToday: number;
   }[];
   habits: {
     name: string;
@@ -52,6 +52,7 @@ export interface ActionsContextData {
   details: {
     day: string;
     salutation: string;
+    todayKey: string;
   };
   user: UserI;
   tracker: Map<string, TrackI>;

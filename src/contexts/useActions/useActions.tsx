@@ -6,7 +6,11 @@ import {
   UserI,
   TrackI,
 } from "./types";
-import { dateFormatter, getAppropriateSalutation } from "utils/formatters";
+import {
+  dateFormatter,
+  getAppropriateSalutation,
+  getTrackerKey,
+} from "utils/formatters";
 
 export const ActionsContext = createContext({} as ActionsContextData);
 
@@ -20,18 +24,18 @@ const defaultTrackI: TrackI = {
   goals: [
     {
       name: "Academia",
-      currentToday: 0,
+      currentToday: 1,
       current: 1,
       total: 15,
-      doneToday: false,
+      totalToday: 1,
     },
-    { name: "Faxina", currentToday: 0, current: 1, total: 4, doneToday: false },
+    { name: "Faxina", currentToday: 0, current: 1, total: 4, totalToday: 1 },
     {
       name: "Ler Crianças Índigo",
       currentToday: 0,
       current: 50,
       total: 177,
-      doneToday: false,
+      totalToday: 10,
     },
   ],
 };
@@ -148,6 +152,7 @@ export function ActionsProvider({
   const details = {
     day: dateFormatter(today),
     salutation: getAppropriateSalutation(today),
+    todayKey: getTrackerKey(today),
   };
 
   return (

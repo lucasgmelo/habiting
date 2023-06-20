@@ -6,7 +6,45 @@ import CardChart from "components/CardChart";
 import { useActions } from "contexts/useActions/useActions";
 
 const Default = () => {
-  const { user, details } = useActions();
+  const { user, details, tracker } = useActions();
+
+  const formatActions = () => {
+    const todayActions = tracker.get(details.todayKey);
+
+    if (todayActions) {
+      const goalsActions = todayActions?.goals.map((goal) => {
+        return {
+          title: goal.name,
+          progress: goal.currentToday,
+          total: goal.totalToday,
+          progressPercent: goal.currentToday / goal.totalToday,
+          text:
+            goal.currentToday / goal.totalToday === 1
+              ? "Concluído"
+              : "Adicionar progresso",
+        };
+      });
+
+      const habitsAction = todayActions?.habits.map((goal) => {
+        return {
+          title: goal.name,
+          progress: goal.current,
+          total: goal.total,
+          progressPercent: goal.current / goal.total,
+          text:
+            goal.current / goal.total === 1
+              ? "Concluído"
+              : "Adicionar progresso",
+        };
+      });
+
+      return [...goalsActions, ...habitsAction];
+    }
+
+    return [];
+  };
+
+  const formattedActions = formatActions();
 
   return (
     <S.Wrapper>
@@ -35,34 +73,16 @@ const Default = () => {
       </S.WidgetGrid>
       <S.ActionsTitle>Ações</S.ActionsTitle>
       <S.Grid>
-        <ProgressCard
-          title="Tomar café da manhã"
-          progress="1"
-          total="2"
-          progressPercent="75"
-          buttonText="Concluir"
-        />
-        <ProgressCard
-          title="Tomar café da manhã"
-          progress="2"
-          total="2"
-          progressPercent="100"
-          buttonText="Concluir"
-        />
-        <ProgressCard
-          title="Tomar café da manhã"
-          progress="1"
-          total="2"
-          progressPercent="75"
-          buttonText="Concluir"
-        />
-        <ProgressCard
-          title="Tomar café da manhã"
-          progress="1"
-          total="2"
-          progressPercent="75"
-          buttonText="Adicionar progresso"
-        />
+        {formattedActions.map((action) => (
+          <ProgressCard
+            key={action.title}
+            title={action.title}
+            progress={String(action.progress)}
+            total={String(action.total)}
+            progressPercent={String(action.progressPercent * 100)}
+            buttonText={action.text}
+          />
+        ))}
       </S.Grid>
     </S.Wrapper>
   );
