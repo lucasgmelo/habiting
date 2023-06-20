@@ -1,12 +1,17 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ checked: boolean }>`
+  opacity: ${({ checked }) => (checked ? 0.8 : 1)};
+
   padding: 24px 16px;
 
   width: 100%;
   background: ${({ theme }) => theme.colors.white};
   border-radius: 5px;
-  box-shadow: ${({ theme }) => theme.shadows.main};
+  box-shadow: ${({ theme, checked }) =>
+    checked ? "none" : theme.shadows.main};
+  border: ${({ theme, checked }) =>
+    checked ? `1px solid ${theme.colors.contour}` : "none"};
 
   position: relative;
 

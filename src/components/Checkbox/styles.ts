@@ -10,11 +10,11 @@ export const StyledCheckbox: FC<CheckboxProps> = styled(AntdCheckbox)`
   }
 
   .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: #fff;
     border-color: ${({ theme }) => theme.colors.darkPrimary};
+    background: ${({ theme }) => theme.colors.darkPrimary};
 
     &:after {
-      border-color: ${({ theme }) => theme.colors.darkPrimary};
+      border-color: #fff;
       left: 20% !important;
     }
   }
@@ -22,13 +22,13 @@ export const StyledCheckbox: FC<CheckboxProps> = styled(AntdCheckbox)`
   :where(.css-dev-only-do-not-override-1wazalj).ant-checkbox
     .ant-checkbox-input:focus-visible
     + .ant-checkbox-inner {
-    outline: ${({ theme }) => `4px solid ${theme.colors.cleanPrimary}`};
+    outline: ${({ theme }) => `4px solid ${theme.colors.darkPrimary}`};
   }
 
   :where(.css-dev-only-do-not-override-1wazalj).ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover
     .ant-checkbox-checked:not(.ant-checkbox-disabled)
     .ant-checkbox-inner {
-    background-color: ${({ theme }) => theme.colors.cleanPrimary};
+    background-color: ${({ theme }) => theme.colors.darkPrimary};
   }
 
   :where(.css-dev-only-do-not-override-1wazalj).ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover
