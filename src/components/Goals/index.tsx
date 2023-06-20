@@ -3,41 +3,74 @@ import * as S from "./styles";
 import { QuillPen, Seedling } from "@styled-icons/remix-fill";
 import CustomTable from "components/CustomTable";
 import { Progress } from "antd";
-import { ArrowUpCircle } from "@styled-icons/remix-line";
+import { useActions } from "contexts/useActions/useActions";
 
 type AlignType = "center" | "left" | "right";
 
 const Goals = () => {
-  const dataSource = [
-    {
-      key: "1",
-      name: "Academia",
-      current: 1,
-      goal: 15,
-      progress: Number(((1 / 15) * 100).toFixed(2)),
-    },
-    {
-      key: "2",
-      name: "Faxina",
-      current: 1,
-      goal: 4,
-      progress: Number(((1 / 4) * 100).toFixed(2)),
-    },
-    {
-      key: "3",
-      name: "Ler Crianças Índigo",
-      current: 22,
-      goal: 177,
-      progress: Number(((22 / 177) * 100).toFixed(2)),
-    },
-    {
-      key: "4",
-      name: "Tomar remédio corretamente",
-      current: 1,
-      goal: 31,
-      progress: Number(((1 / 31) * 100).toFixed(2)),
-    },
-  ];
+  const { user } = useActions();
+
+  const dataSource = user.goals.map((goal, idx) => {
+    return {
+      key: idx + 1,
+      name: goal.name,
+      current: goal.current,
+      goal: goal.total,
+      progress: Number(((goal.current / goal.total) * 100).toFixed(2)),
+    };
+  });
+
+  // const dataSource = [
+  //   {
+  //     key: "1",
+  //     name: "Academia",
+  //     current: 1,
+  //     goal: 15,
+  //     progress: Number(((1 / 15) * 100).toFixed(2)),
+  //   },
+  //   {
+  //     key: "2",
+  //     name: "Faxina",
+  //     current: 1,
+  //     goal: 4,
+  //     progress: Number(((1 / 4) * 100).toFixed(2)),
+  //   },
+  //   {
+  //     key: "3",
+  //     name: "Ler Crianças Índigo",
+  //     current: 50,
+  //     goal: 177,
+  //     progress: Number(((50 / 177) * 100).toFixed(2)),
+  //   },
+  //   {
+  //     key: "4",
+  //     name: "Tomar remédio corretamente",
+  //     current: 1,
+  //     goal: 31,
+  //     progress: Number(((1 / 31) * 100).toFixed(2)),
+  //   },
+  //   {
+  //     key: "5",
+  //     name: "Não acumular tarefas - CIn",
+  //     current: 1,
+  //     goal: 31,
+  //     progress: Number(((1 / 31) * 100).toFixed(2)),
+  //   },
+  //   {
+  //     key: "6",
+  //     name: "Bater ponto",
+  //     current: 2,
+  //     goal: 31,
+  //     progress: Number(((2 / 31) * 100).toFixed(2)),
+  //   },
+  //   {
+  //     key: "7",
+  //     name: "3 refeições diárias",
+  //     current: 1,
+  //     goal: 31,
+  //     progress: Number(((1 / 31) * 100).toFixed(2)),
+  //   },
+  // ];
 
   const columns = [
     {
@@ -86,7 +119,7 @@ const Goals = () => {
         <CardIcon IconComponent={<Seedling />} bgColor="#32B768">
           <S.CardIconContent>
             <p>
-              Você possui <span>16</span> <br />
+              Você possui <span>{user.goals.length}</span> <br />
               metas cadastradas!
             </p>
             <p className="description">Planeje seus objetivos com cautela</p>
@@ -96,7 +129,7 @@ const Goals = () => {
         <CardIcon IconComponent={<Seedling />} bgColor="#32B768">
           <S.CardIconContent>
             <p>
-              Você possui <span>16</span> <br />
+              Você possui <span>{user.goals.length}</span> <br />
               metas cadastradas!
             </p>
             <p className="description">Planeje seus objetivos com cautela</p>

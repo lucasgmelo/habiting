@@ -11,7 +11,7 @@ export const Wrapper = styled.div<{ checked: boolean }>`
   box-shadow: ${({ theme, checked }) =>
     checked ? "none" : theme.shadows.main};
   border: ${({ theme, checked }) =>
-    checked ? `1px solid ${theme.colors.contour}` : "none"};
+    checked ? `1px solid ${theme.colors.contour}` : "1px solid transparent"};
 
   position: relative;
 
@@ -33,4 +33,8 @@ export const Group = styled.div`
   display: flex;
   gap: 8px;
   align-items: center;
+
+  p {
+    font-size: ${({ theme }) => theme.font.sizes.small};
+  }
 `;
