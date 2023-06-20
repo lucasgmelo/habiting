@@ -6,6 +6,7 @@ import {
   UserI,
   TrackI,
 } from "./types";
+import { dateFormatter, getAppropriateSalutation } from "utils/formatters";
 
 export const ActionsContext = createContext({} as ActionsContextData);
 
@@ -34,6 +35,41 @@ const defaultTrackI: TrackI = {
     },
   ],
 };
+
+const defaultMap = new Map([
+  ["2023-06-19", defaultTrackI],
+  ["2023-06-20", defaultTrackI],
+  ["2023-06-21", defaultTrackI],
+  ["2023-06-22", defaultTrackI],
+  ["2023-06-23", defaultTrackI],
+  ["2023-06-24", defaultTrackI],
+  ["2023-06-25", defaultTrackI],
+  ["2023-06-26", defaultTrackI],
+  ["2023-06-27", defaultTrackI],
+  ["2023-06-28", defaultTrackI],
+  ["2023-06-29", defaultTrackI],
+  ["2023-06-30", defaultTrackI],
+  ["2023-06-31", defaultTrackI],
+  ["2023-07-01", defaultTrackI],
+  ["2023-07-02", defaultTrackI],
+  ["2023-07-03", defaultTrackI],
+  ["2023-07-04", defaultTrackI],
+  ["2023-07-05", defaultTrackI],
+  ["2023-07-06", defaultTrackI],
+  ["2023-07-07", defaultTrackI],
+  ["2023-07-08", defaultTrackI],
+  ["2023-07-09", defaultTrackI],
+  ["2023-07-10", defaultTrackI],
+  ["2023-07-11", defaultTrackI],
+  ["2023-07-12", defaultTrackI],
+  ["2023-07-13", defaultTrackI],
+  ["2023-07-14", defaultTrackI],
+  ["2023-07-15", defaultTrackI],
+  ["2023-07-16", defaultTrackI],
+  ["2023-07-17", defaultTrackI],
+  ["2023-07-18", defaultTrackI],
+  ["2023-07-19", defaultTrackI],
+]);
 
 const defaultUser: UserI = {
   name: "Lucas Melo",
@@ -84,40 +120,6 @@ const defaultUser: UserI = {
     },
   ],
   tasks: [],
-  tracker: new Map([
-    ["2023-06-19", defaultTrackI],
-    ["2023-06-20", defaultTrackI],
-    ["2023-06-21", defaultTrackI],
-    ["2023-06-22", defaultTrackI],
-    ["2023-06-23", defaultTrackI],
-    ["2023-06-24", defaultTrackI],
-    ["2023-06-25", defaultTrackI],
-    ["2023-06-26", defaultTrackI],
-    ["2023-06-27", defaultTrackI],
-    ["2023-06-28", defaultTrackI],
-    ["2023-06-29", defaultTrackI],
-    ["2023-06-30", defaultTrackI],
-    ["2023-06-31", defaultTrackI],
-    ["2023-07-01", defaultTrackI],
-    ["2023-07-02", defaultTrackI],
-    ["2023-07-03", defaultTrackI],
-    ["2023-07-04", defaultTrackI],
-    ["2023-07-05", defaultTrackI],
-    ["2023-07-06", defaultTrackI],
-    ["2023-07-07", defaultTrackI],
-    ["2023-07-08", defaultTrackI],
-    ["2023-07-09", defaultTrackI],
-    ["2023-07-10", defaultTrackI],
-    ["2023-07-11", defaultTrackI],
-    ["2023-07-12", defaultTrackI],
-    ["2023-07-13", defaultTrackI],
-    ["2023-07-14", defaultTrackI],
-    ["2023-07-15", defaultTrackI],
-    ["2023-07-16", defaultTrackI],
-    ["2023-07-17", defaultTrackI],
-    ["2023-07-18", defaultTrackI],
-    ["2023-07-19", defaultTrackI],
-  ]),
 };
 
 export function ActionsProvider({
@@ -139,8 +141,17 @@ export function ActionsProvider({
     return defaultUser;
   });
 
+  const [tracker, setTracker] = useState(defaultMap);
+
+  const today = new Date();
+
+  const details = {
+    day: dateFormatter(today),
+    salutation: getAppropriateSalutation(today),
+  };
+
   return (
-    <ActionsContext.Provider value={{ user }}>
+    <ActionsContext.Provider value={{ user, tracker, details }}>
       {children}
     </ActionsContext.Provider>
   );

@@ -46,11 +46,15 @@ export interface UserI {
   goals: GoalI[];
   habits: HabitI[];
   tasks: TasksI[];
-  tracker: Map<string, TrackI>;
 }
 
 export interface ActionsContextData {
+  details: {
+    day: string;
+    salutation: string;
+  };
   user: UserI;
+  tracker: Map<string, TrackI>;
 }
 
 export interface ActionsProviderProps {
