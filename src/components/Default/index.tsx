@@ -4,11 +4,11 @@ import CardIcon from "components/CardIcon";
 import { Fire, Lightbulb } from "@styled-icons/remix-fill";
 import CardChart from "components/CardChart";
 import { useActions } from "contexts/useActions/useActions";
+import { useState } from "react";
 
 const Default = () => {
   const { user, details, tracker } = useActions();
-
-  const formatActions = () => {
+  const [formattedActions, setFormattedActions] = useState(() => {
     const todayActions = tracker.get(details.todayKey);
 
     if (todayActions) {
@@ -38,13 +38,30 @@ const Default = () => {
         };
       });
 
-      return [...goalsActions, ...habitsAction];
+      return [...goalsActions, ...habitsAction].sort((a, b) => {
+        if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
+        if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
+        return 0;
+      });
     }
 
     return [];
+  });
+
+  const sortActions = (actions: typeof formattedActions) => {
+    return actions.sort((a, b) => {
+      if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
+      if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
+      return 0;
+    });
   };
 
-  const formattedActions = formatActions();
+  const generalAnalytics = {
+    actionsDone: formattedActions.filter(
+      (action) => action.progressPercent >= 1
+    ).length,
+    totalActions: formattedActions.length,
+  };
 
   return (
     <S.Wrapper>
@@ -53,7 +70,10 @@ const Default = () => {
       </S.Title>
       <S.Subtitle>{details.day}</S.Subtitle>
       <S.WidgetGrid>
-        <CardChart />
+        <CardChart
+          current={generalAnalytics.actionsDone}
+          total={generalAnalytics.totalActions}
+        />
         <CardIcon IconComponent={<Fire />} bgColor="#E83F5B">
           <S.WidgetBigTitle>
             Sequência de <span>8 dias</span>
@@ -73,7 +93,7 @@ const Default = () => {
       </S.WidgetGrid>
       <S.ActionsTitle>Ações</S.ActionsTitle>
       <S.Grid>
-        {formattedActions.map((action) => (
+        {sortActions(formattedActions).map((action) => (
           <ProgressCard
             key={action.title}
             title={action.title}

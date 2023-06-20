@@ -17,7 +17,7 @@ export const ActionsContext = createContext({} as ActionsContextData);
 const defaultTrackI: TrackI = {
   habits: [
     { name: "Tomar o remédio", current: 0, total: 1 },
-    { name: "Tomar o remédio", current: 0, total: 3 },
+    { name: "Refeições diárias", current: 0, total: 3 },
     { name: "Bater o ponto", current: 0, total: 3 },
     { name: "Não acumular tarefas - CIn", current: 0, total: 1 },
   ],
