@@ -1,10 +1,10 @@
 import Layout from "components/Layout";
-import Tasks from "components/Tasks";
+import Goals from "components/Goals";
 
 export default function Home() {
   return (
     <Layout>
-      <Tasks />
+      <Goals />
     </Layout>
   );
 }
