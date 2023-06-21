@@ -7,7 +7,7 @@ import {
   TrackI,
 } from "./types";
 import {
-  dateFormatter,
+  dateFormatterText,
   getAppropriateSalutation,
   getTrackerKey,
 } from "utils/formatters";
@@ -16,10 +16,10 @@ export const ActionsContext = createContext({} as ActionsContextData);
 
 const defaultTrackI: TrackI = {
   habits: [
-    { name: "Tomar o remédio", current: 0, total: 1 },
-    { name: "Refeições diárias", current: 0, total: 3 },
-    { name: "Bater o ponto", current: 0, total: 3 },
-    { name: "Não acumular tarefas - CIn", current: 0, total: 1 },
+    { name: "Tomar o remédio", current: 1, total: 1 },
+    { name: "Refeições diárias", current: 2, total: 3 },
+    { name: "Bater o ponto", current: 3, total: 4 },
+    { name: "Não acumular tarefas - CIn", current: 1, total: 1 },
   ],
   goals: [
     {
@@ -106,24 +106,50 @@ const defaultUser: UserI = {
   goals: [
     {
       name: "Academia",
-      deadline: new Date("2023-07-19"),
+      deadline: new Date(2023, 6, 19),
       current: 1,
       total: 15,
     },
     {
       name: "Faxina",
-      deadline: new Date("2023-07-19"),
+      deadline: new Date(2023, 6, 19),
       current: 1,
       total: 4,
     },
     {
       name: "Ler Crianças Índigo",
-      deadline: new Date("2023-07-19"),
+      deadline: new Date(2023, 6, 19),
       current: 50,
       total: 177,
     },
   ],
-  tasks: [],
+  tasks: [
+    {
+      name: "Reiki",
+      description: "Sexta, às 9h",
+      status: false,
+      dateDone: null,
+      deadline: new Date(2023, 5, 23),
+    },
+    {
+      name: "Aluguel",
+      status: true,
+      dateDone: new Date(2023, 5, 19),
+    },
+    {
+      name: "Visitar Mário",
+      status: false,
+      deadline: new Date(2023, 5, 18),
+      dateDone: null,
+    },
+    {
+      name: "Show de Joelma",
+      description: "testando 7dias+",
+      status: false,
+      deadline: new Date(2023, 6, 1),
+      dateDone: null,
+    },
+  ],
 };
 
 export function ActionsProvider({
@@ -137,11 +163,11 @@ export function ActionsProvider({
     );
 
     if (storagedUser) {
-      localStorage.setItem("storagedUser", JSON.stringify(storagedUser));
+      // localStorage.setItem("storagedUser", JSON.stringify(storagedUser));
       return storagedUser;
     }
 
-    localStorage.setItem("storagedUser", JSON.stringify(defaultUser));
+    // localStorage.setItem("storagedUser", JSON.stringify(defaultUser));
     return defaultUser;
   });
 
@@ -150,7 +176,7 @@ export function ActionsProvider({
   const today = new Date();
 
   const details = {
-    day: dateFormatter(today),
+    day: dateFormatterText(today),
     salutation: getAppropriateSalutation(today),
     todayKey: getTrackerKey(today),
   };

@@ -1,22 +1,46 @@
 import Checkbox from "components/Checkbox";
+import { FC, useState } from "react";
+import { formatStringToDate, formatStringToDeadline } from "utils/formatters";
 import * as S from "./styles";
-import { useState } from "react";
 
-const TaskCard = () => {
-  const [checked, setChecked] = useState(false);
+interface TaskCardI {
+  initialStatus: boolean;
+  deadline?: Date;
+  title: string;
+  description?: string;
+}
+
+const TaskCard: FC<TaskCardI> = ({
+  deadline,
+  title,
+  description,
+  initialStatus,
+}) => {
+  const [checked, setChecked] = useState(initialStatus);
 
   const onCheck = () => {
     setChecked(!checked);
   };
 
   return (
-    <S.Wrapper checked={checked}>
-      <p className="deadline">até 10/06</p>
+    <S.Wrapper
+      checked={checked}
+      late={
+        !!deadline && !checked
+          ? formatStringToDate(String(deadline)) < new Date()
+          : false
+      }
+    >
+      {deadline !== undefined && (
+        <p className="deadline">
+          até {formatStringToDeadline(String(deadline))}
+        </p>
+      )}
       <S.Group>
         <Checkbox checked={checked} onChange={onCheck} />
-        <p>Marcar psicóloga</p>
+        <p>{title}</p>
       </S.Group>
-      <p>Ligar e tentar marcar na Segunda, às 16h ou na Terça, às 14h.</p>
+      <p>{description}</p>
     </S.Wrapper>
   );
 };

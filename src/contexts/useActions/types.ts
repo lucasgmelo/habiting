@@ -12,8 +12,8 @@ export interface TasksI {
   name: string;
   description?: string;
   status: boolean;
-  deadline?: string;
-  done: null | Date;
+  deadline?: Date;
+  dateDone: null | Date;
 }
 
 export interface HabitI {

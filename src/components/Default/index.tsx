@@ -1,10 +1,11 @@
-import ProgressCard from "components/ProgressCard";
-import * as S from "./styles";
-import CardIcon from "components/CardIcon";
 import { Fire, Lightbulb } from "@styled-icons/remix-fill";
 import CardChart from "components/CardChart";
+import CardIcon from "components/CardIcon";
+import ProgressCard from "components/ProgressCard";
+import TaskCard from "components/TaskCard";
 import { useActions } from "contexts/useActions/useActions";
 import { useState } from "react";
+import * as S from "./styles";
 
 const Default = () => {
   const { user, details, tracker } = useActions();
@@ -47,11 +48,20 @@ const Default = () => {
 
     return [];
   });
+  const [formattedTasks, setFormattedTasks] = useState(user.tasks);
 
   const sortActions = (actions: typeof formattedActions) => {
     return actions.sort((a, b) => {
       if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
       if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
+      return 0;
+    });
+  };
+
+  const sortTasks = (actions: typeof formattedTasks) => {
+    return actions.sort((a, b) => {
+      if (a.status && !b.status) return 1;
+      if (!a.status && b.status) return -1;
       return 0;
     });
   };
@@ -87,7 +97,7 @@ const Default = () => {
             <br /> mais consistente foi
           </S.WidgetBigTitle>
           <S.WidgetBigTitle>
-            <span>Passear com o cachorro</span>
+            <span>Academia</span>
           </S.WidgetBigTitle>
         </CardIcon>
       </S.WidgetGrid>
@@ -104,6 +114,18 @@ const Default = () => {
           />
         ))}
       </S.Grid>
+      <S.ActionsTitle>Tarefas</S.ActionsTitle>
+      <S.TasksGrid>
+        {sortTasks(formattedTasks).map((task) => (
+          <TaskCard
+            key={task.name}
+            title={task.name}
+            initialStatus={task.status}
+            description={task.description}
+            deadline={task.deadline}
+          />
+        ))}
+      </S.TasksGrid>
     </S.Wrapper>
   );
 };

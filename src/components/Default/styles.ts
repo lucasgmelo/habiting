@@ -52,3 +52,11 @@ export const WidgetDescription = styled.p`
   color: ${({ theme }) => theme.colors.gray};
   font-family: "Inter", sans-serif;
 `;
+
+export const TasksGrid = styled.div`
+  margin-top: 32px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 32px;
+`;
