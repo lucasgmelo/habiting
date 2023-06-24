@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import {
   ActionsProviderProps,
@@ -201,11 +201,52 @@ export function ActionsProvider({
     };
 
     setUser(newUserData);
-    localStorage.setItem("storagedUser", JSON.stringify(newUserData));
   };
 
+  const deleteTask = (name: string) => {
+    const newTasks: TasksI[] = user.tasks.filter((task) => task.name !== name);
+
+    const newUserData = {
+      ...user,
+      tasks: newTasks,
+    };
+
+    setUser(newUserData);
+  };
+
+  const toggleTask = (name: string, newStatus: boolean) => {
+    const newTasks: TasksI[] = user.tasks.map((task) => {
+      if (task.name !== name) return task;
+
+      if (newStatus)
+        return {
+          ...task,
+          status: true,
+          dateDone: new Date().toISOString(),
+        };
+
+      return { ...task, status: false, dateDone: null };
+    });
+
+    const newUserData = {
+      ...user,
+      tasks: newTasks,
+    };
+
+    console.log(newUserData);
+
+    setUser(newUserData);
+  };
+
+  useEffect(() => {
+    // localStorage.setItem("storagedUser", JSON.stringify(user));
+    console.log(user);
+  }, [user]);
+
   return (
-    <ActionsContext.Provider value={{ user, tracker, details, createTask }}>
+    <ActionsContext.Provider
+      value={{ user, tracker, details, createTask, deleteTask, toggleTask }}
+    >
       {children}
     </ActionsContext.Provider>
   );

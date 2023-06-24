@@ -64,6 +64,8 @@ export interface ActionsContextData {
   user: UserI;
   tracker: Map<string, TrackI>;
   createTask: (name: string, description?: string, deadline?: string) => void;
+  deleteTask: (name: string) => void;
+  toggleTask: (name: string, newStatus: boolean) => void;
 }
 
 export interface ActionsProviderProps {

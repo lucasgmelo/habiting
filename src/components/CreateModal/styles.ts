@@ -12,7 +12,12 @@ export const Wrapper = styled(Modal)`
 
   .footer {
     display: flex;
-    gap: 8px;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+
+    .buttons {
+      display: flex;
+      gap: 8px;
+    }
   }
 `;

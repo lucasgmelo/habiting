@@ -1,6 +1,6 @@
-import { FC, Fragment } from "react";
+import { FC, Fragment, useState } from "react";
 import * as S from "./styles";
-import { Button, DatePicker, Form, Input } from "antd";
+import { Button, Checkbox, DatePicker, Form, Input, message } from "antd";
 import { useActions } from "contexts/useActions/useActions";
 
 interface CreateModalI {
@@ -11,16 +11,23 @@ interface CreateModalI {
 
 const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   const [form] = Form.useForm();
-  const { createTask } = useActions();
+  const { createTask, user } = useActions();
+  const [createAnother, setCreateAnother] = useState(false);
   const dateFormat = "DD/MM/YYYY";
 
   const onSubmitTask = (values: {
     taskname: string;
     description: string;
     deadline: string;
+    another: boolean;
   }) => {
+    console.log(values);
     createTask(values.taskname, values.description, values.deadline);
-    closeModal();
+    form.resetFields();
+    if (!createAnother) {
+      closeModal();
+      message.success("Tarefa criada com sucesso!");
+    }
   };
 
   const renderContent = () => {
@@ -43,6 +50,16 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                   required: true,
                   message: "Por favor, insira o nome da tarefa.",
                 },
+                {
+                  message: "Já existe uma tarefa com esse nome",
+                  validator: (_: unknown, value: string) => {
+                    if (user.tasks.find((task) => task.name === value)) {
+                      return Promise.reject();
+                    }
+
+                    return Promise.resolve();
+                  },
+                },
               ]}
             >
               <Input placeholder="Nome da tarefa" />
@@ -57,17 +74,25 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
             </Form.Item>
 
             <div className="footer">
-              <Button
-                onClick={() => {
-                  form.resetFields();
-                  closeModal();
-                }}
+              <Checkbox
+                checked={createAnother}
+                onChange={() => setCreateAnother(!createAnother)}
               >
-                Cancelar
-              </Button>
-              <Button htmlType="submit" type="primary">
-                Criar
-              </Button>
+                Criar outra tarefa
+              </Checkbox>
+              <div className="buttons">
+                <Button
+                  onClick={() => {
+                    form.resetFields();
+                    closeModal();
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button htmlType="submit" type="primary">
+                  Criar
+                </Button>
+              </div>
             </div>
           </Form>
         </Fragment>
