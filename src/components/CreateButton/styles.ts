@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Menu as AntdMenu } from "antd";
 
 export const Wrapper = styled.div`
   button {
@@ -18,3 +19,5 @@ export const Wrapper = styled.div`
     }
   }
 `;
+
+export const Menu = styled(AntdMenu)``;
