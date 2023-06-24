@@ -4,6 +4,14 @@ import styled from "styled-components";
 export const Wrapper = styled(Modal)`
   form {
     margin-top: 24px;
+
+    p {
+      margin: 40px 0 32px;
+    }
+  }
+
+  .detail {
+    font-weight: 500;
   }
 
   .ant-picker {

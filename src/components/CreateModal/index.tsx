@@ -2,6 +2,7 @@ import { FC, Fragment, useState } from "react";
 import * as S from "./styles";
 import { Button, Checkbox, DatePicker, Form, Input, message } from "antd";
 import { useActions } from "contexts/useActions/useActions";
+import { formatStringToDeadline } from "utils/formatters";
 
 interface CreateModalI {
   open: boolean;
@@ -27,6 +28,21 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
     if (!createAnother) {
       closeModal();
       message.success("Tarefa criada com sucesso!");
+    }
+  };
+
+  const onSubmitGoal = (values: {
+    goalname: string;
+    description: string;
+    deadline: string;
+    another: boolean;
+  }) => {
+    console.log(values);
+    // createTask(values.goalname, values.description, values.deadline);
+    // form.resetFields();
+    if (!createAnother) {
+      closeModal();
+      message.success("Meta criada com sucesso!");
     }
   };
 
@@ -79,6 +95,97 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 onChange={() => setCreateAnother(!createAnother)}
               >
                 Criar outra tarefa
+              </Checkbox>
+              <div className="buttons">
+                <Button
+                  onClick={() => {
+                    form.resetFields();
+                    closeModal();
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button htmlType="submit" type="primary">
+                  Criar
+                </Button>
+              </div>
+            </div>
+          </Form>
+        </Fragment>
+      );
+
+    if (createMode === "goal")
+      return (
+        <Fragment>
+          <h1>Criar meta</h1>
+          <h3>
+            Ideal para monitorar seus objetivos. Se encaixa bem com ações que
+            possuem um marco tangível de finalização.
+            <br />
+            ex: ir 200x na academia, ler 12 livros, investir 1000 reais...
+          </h3>
+
+          <Form layout="vertical" form={form} onFinish={onSubmitGoal}>
+            <Form.Item
+              label="Nome"
+              name="goalname"
+              required
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor, insira o nome da meta.",
+                },
+                {
+                  message: "Já existe uma meta com esse nome",
+                  validator: (_: unknown, value: string) => {
+                    if (user.goals.find((goal) => goal.name === value)) {
+                      return Promise.reject();
+                    }
+
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <Input placeholder="Nome da meta" />
+            </Form.Item>
+
+            <Form.Item label="Descrição" name="description">
+              <Input placeholder="Descrição da meta (opcional)" />
+            </Form.Item>
+
+            <Form.Item
+              label="Repetições"
+              name="repetitions"
+              required
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor, insira a quantidade de repetições.",
+                },
+              ]}
+            >
+              <Input
+                type="number"
+                min={1}
+                placeholder="Vezes que a ação será realizada"
+              />
+            </Form.Item>
+
+            <p>
+              O seu prazo final para esse perfil é{" "}
+              <span className="detail">
+                {formatStringToDeadline(user.endDate)}
+              </span>
+              , crie metas factíveis!
+            </p>
+
+            <div className="footer">
+              <Checkbox
+                checked={createAnother}
+                onChange={() => setCreateAnother(!createAnother)}
+              >
+                Criar outra meta
               </Checkbox>
               <div className="buttons">
                 <Button
