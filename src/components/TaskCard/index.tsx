@@ -31,11 +31,11 @@ const TaskCard: FC<TaskCardI> = ({
           : false
       }
     >
-      {deadline !== undefined && (
+      {/* {deadline !== undefined && (
         <p className="deadline">
           até {formatStringToDeadline(String(deadline))}
         </p>
-      )}
+      )} */}
       <S.Group>
         <Checkbox checked={checked} onChange={onCheck} />
         <p>{title}</p>

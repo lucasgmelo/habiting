@@ -6,49 +6,55 @@ import TaskCard from "components/TaskCard";
 import { useActions } from "contexts/useActions/useActions";
 import { useState } from "react";
 import * as S from "./styles";
+import ProgressModal from "components/ProgressModal";
+import { GeneralActionI } from "contexts/useActions/types";
 
 const Default = () => {
   const { user, details, tracker } = useActions();
-  const [formattedActions, setFormattedActions] = useState(() => {
-    const todayActions = tracker.get(details.todayKey);
+  const [formattedActions, setFormattedActions] = useState<GeneralActionI[]>(
+    () => {
+      const todayActions = tracker.get(details.todayKey);
 
-    if (todayActions) {
-      const goalsActions = todayActions?.goals.map((goal) => {
-        return {
-          title: goal.name,
-          progress: goal.currentToday,
-          total: goal.totalToday,
-          progressPercent: goal.currentToday / goal.totalToday,
-          text:
-            goal.currentToday / goal.totalToday === 1
-              ? "Concluído"
-              : "Adicionar progresso",
-        };
-      });
+      if (todayActions) {
+        const goalsActions = todayActions?.goals.map((goal) => {
+          return {
+            title: goal.name,
+            progress: goal.currentToday,
+            total: goal.totalToday,
+            progressPercent: goal.currentToday / goal.totalToday,
+            text:
+              goal.currentToday / goal.totalToday === 1
+                ? "Concluído"
+                : "Adicionar progresso",
+          };
+        });
 
-      const habitsAction = todayActions?.habits.map((goal) => {
-        return {
-          title: goal.name,
-          progress: goal.current,
-          total: goal.total,
-          progressPercent: goal.current / goal.total,
-          text:
-            goal.current / goal.total === 1
-              ? "Concluído"
-              : "Adicionar progresso",
-        };
-      });
+        const habitsAction = todayActions?.habits.map((goal) => {
+          return {
+            title: goal.name,
+            progress: goal.current,
+            total: goal.total,
+            progressPercent: goal.current / goal.total,
+            text:
+              goal.current / goal.total === 1
+                ? "Concluído"
+                : "Adicionar progresso",
+          };
+        });
 
-      return [...goalsActions, ...habitsAction].sort((a, b) => {
-        if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
-        if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
-        return 0;
-      });
+        return [...goalsActions, ...habitsAction].sort((a, b) => {
+          if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
+          if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
+          return 0;
+        });
+      }
+
+      return [];
     }
-
-    return [];
-  });
+  );
   const [formattedTasks, setFormattedTasks] = useState(user.tasks);
+  const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState<GeneralActionI>();
 
   const sortActions = (actions: typeof formattedActions) => {
     return actions.sort((a, b) => {
@@ -73,8 +79,20 @@ const Default = () => {
     totalActions: formattedActions.length,
   };
 
+  const onClickProgress = (action: GeneralActionI) => {
+    setCurrentAction(action);
+    setIsProgressModalOpen(true);
+  };
+
   return (
     <S.Wrapper>
+      <ProgressModal
+        open={isProgressModalOpen}
+        onOk={() => {}}
+        action={currentAction}
+        closeModal={() => setIsProgressModalOpen(false)}
+      />
+
       <S.Title>
         Olá, <span>{user.name}</span>. {details.salutation}
       </S.Title>
@@ -111,6 +129,7 @@ const Default = () => {
             total={String(action.total)}
             progressPercent={String(action.progressPercent * 100)}
             buttonText={action.text}
+            onClickProgress={() => onClickProgress(action)}
           />
         ))}
       </S.Grid>

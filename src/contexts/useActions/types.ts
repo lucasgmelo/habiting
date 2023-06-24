@@ -38,6 +38,13 @@ export interface TrackI {
   }[];
 }
 
+export interface GeneralActionI {
+  title: string;
+  progress: number;
+  total: number;
+  progressPercent: number;
+  text: string;
+}
 export interface UserI {
   name: string;
   photo: string;

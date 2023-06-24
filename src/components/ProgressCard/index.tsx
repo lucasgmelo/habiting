@@ -7,6 +7,7 @@ interface ProgressCardI {
   progressPercent?: string;
   progress?: string;
   buttonText: string;
+  onClickProgress: () => void;
 }
 
 const ProgressCard: FC<ProgressCardI> = ({
@@ -15,6 +16,7 @@ const ProgressCard: FC<ProgressCardI> = ({
   buttonText,
   progress = "0",
   progressPercent = "0",
+  onClickProgress,
 }) => (
   <S.Wrapper progress={progressPercent}>
     <S.Title>{title}</S.Title>
@@ -24,7 +26,7 @@ const ProgressCard: FC<ProgressCardI> = ({
     {progressPercent === "100" ? (
       <S.Done>Concluído</S.Done>
     ) : (
-      <S.Button>{buttonText}</S.Button>
+      <S.Button onClick={onClickProgress}>{buttonText}</S.Button>
     )}
   </S.Wrapper>
 );

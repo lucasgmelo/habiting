@@ -13,9 +13,6 @@ export const Wrapper = styled.div`
 export const Chart = styled.div`
   width: 140px;
   height: 140px;
-  /* border-radius: 50%; */
-
-  /* background: ${({ theme }) => theme.colors.contour}; */
 `;
 
 export const Content = styled.div``;
