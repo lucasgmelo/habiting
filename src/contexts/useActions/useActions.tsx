@@ -5,6 +5,7 @@ import {
   ActionsContextData,
   UserI,
   TrackI,
+  TasksI,
 } from "./types";
 import {
   dateFormatterText,
@@ -79,8 +80,8 @@ const defaultUser: UserI = {
   name: "Lucas Melo",
   photo:
     "https://pbs.twimg.com/profile_images/1671136321299988483/WYECSKEe_400x400.jpg",
-  startDate: new Date("2023-06-19"),
-  endDate: new Date("2023-07-19"),
+  startDate: new Date("2023-06-19").toISOString(),
+  endDate: new Date("2023-07-19").toISOString(),
   habits: [
     {
       name: "Tomar o remédio",
@@ -106,19 +107,19 @@ const defaultUser: UserI = {
   goals: [
     {
       name: "Academia",
-      deadline: new Date(2023, 6, 19),
+      deadline: new Date(2023, 6, 19).toISOString(),
       current: 1,
       total: 15,
     },
     {
       name: "Faxina",
-      deadline: new Date(2023, 6, 19),
+      deadline: new Date(2023, 6, 19).toISOString(),
       current: 1,
       total: 4,
     },
     {
       name: "Ler Crianças Índigo",
-      deadline: new Date(2023, 6, 19),
+      deadline: new Date(2023, 6, 19).toISOString(),
       current: 50,
       total: 177,
     },
@@ -129,24 +130,24 @@ const defaultUser: UserI = {
       description: "Sexta, às 9h",
       status: false,
       dateDone: null,
-      deadline: new Date(2023, 5, 23),
+      deadline: new Date(2023, 5, 23).toISOString(),
     },
     {
       name: "Aluguel",
       status: true,
-      dateDone: new Date(2023, 5, 19),
+      dateDone: new Date(2023, 5, 19).toISOString(),
     },
     {
       name: "Visitar Mário",
       status: false,
-      deadline: new Date(2023, 5, 18),
+      deadline: new Date(2023, 5, 18).toISOString(),
       dateDone: null,
     },
     {
       name: "Show de Joelma",
       description: "testando 7dias+",
       status: false,
-      deadline: new Date(2023, 6, 1),
+      deadline: new Date(2023, 6, 1).toISOString(),
       dateDone: null,
     },
   ],
@@ -181,8 +182,30 @@ export function ActionsProvider({
     todayKey: getTrackerKey(today),
   };
 
+  const createTask = (
+    name: string,
+    description?: string,
+    deadline?: string
+  ) => {
+    const newTask: TasksI = {
+      name,
+      description,
+      status: false,
+      deadline: deadline,
+      dateDone: null,
+    };
+
+    const newUserData = {
+      ...user,
+      tasks: [...user.tasks, newTask],
+    };
+
+    setUser(newUserData);
+    localStorage.setItem("storagedUser", JSON.stringify(newUserData));
+  };
+
   return (
-    <ActionsContext.Provider value={{ user, tracker, details }}>
+    <ActionsContext.Provider value={{ user, tracker, details, createTask }}>
       {children}
     </ActionsContext.Provider>
   );

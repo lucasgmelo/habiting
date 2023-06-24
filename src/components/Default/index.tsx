@@ -135,7 +135,7 @@ const Default = () => {
       </S.Grid>
       <S.ActionsTitle>Tarefas</S.ActionsTitle>
       <S.TasksGrid>
-        {sortTasks(formattedTasks).map((task) => (
+        {sortTasks(user.tasks).map((task) => (
           <TaskCard
             key={task.name}
             title={task.name}

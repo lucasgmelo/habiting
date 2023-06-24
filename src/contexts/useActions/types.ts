@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 export interface GoalI {
   name: string;
   description?: string;
-  deadline: Date;
+  deadline: string;
   current: number;
   total: number;
 }
@@ -12,8 +12,8 @@ export interface TasksI {
   name: string;
   description?: string;
   status: boolean;
-  deadline?: Date;
-  dateDone: null | Date;
+  deadline?: string;
+  dateDone: null | string;
 }
 
 export interface HabitI {
@@ -48,8 +48,8 @@ export interface GeneralActionI {
 export interface UserI {
   name: string;
   photo: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   goals: GoalI[];
   habits: HabitI[];
   tasks: TasksI[];
@@ -63,6 +63,7 @@ export interface ActionsContextData {
   };
   user: UserI;
   tracker: Map<string, TrackI>;
+  createTask: (name: string, description?: string, deadline?: string) => void;
 }
 
 export interface ActionsProviderProps {

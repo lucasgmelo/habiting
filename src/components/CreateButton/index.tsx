@@ -39,14 +39,14 @@ const CreateButton: FC = () => {
         setIsCreateModalOpen(true);
       },
     },
-    {
-      key: "4",
-      label: <p>Criar épico</p>,
-      onClick: () => {
-        setCreateMode("epic");
-        setIsCreateModalOpen(true);
-      },
-    },
+    // {
+    //   key: "4",
+    //   label: <p>Criar épico</p>,
+    //   onClick: () => {
+    //     setCreateMode("epic");
+    //     setIsCreateModalOpen(true);
+    //   },
+    // },
   ];
 
   return (

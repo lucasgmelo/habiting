@@ -5,7 +5,7 @@ import * as S from "./styles";
 
 interface TaskCardI {
   initialStatus: boolean;
-  deadline?: Date;
+  deadline?: string;
   title: string;
   description?: string;
 }
