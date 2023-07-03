@@ -24,18 +24,8 @@ export interface HabitI {
 }
 
 export interface TrackI {
-  goals: {
-    name: string;
-    currentToday: number;
-    current: number;
-    total: number;
-    totalToday: number;
-  }[];
-  habits: {
-    name: string;
-    current: number;
-    total: number;
-  }[];
+  goals: GoalI[];
+  habits: HabitI[];
 }
 
 export interface GeneralActionI {
@@ -63,6 +53,7 @@ export interface ActionsContextData {
   };
   user: UserI;
   tracker: Map<string, TrackI>;
+  createGoal: (name: string, repetitions: string, description?: string) => void;
   createTask: (name: string, description?: string, deadline?: string) => void;
   deleteTask: (name: string) => void;
   toggleTask: (name: string, newStatus: boolean) => void;

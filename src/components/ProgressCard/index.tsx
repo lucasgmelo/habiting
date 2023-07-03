@@ -17,18 +17,20 @@ const ProgressCard: FC<ProgressCardI> = ({
   progress = "0",
   progressPercent = "0",
   onClickProgress,
-}) => (
-  <S.Wrapper progress={progressPercent}>
-    <S.Title>{title}</S.Title>
-    <S.Progress>
-      {progress}/{total}
-    </S.Progress>
-    {progressPercent === "100" ? (
-      <S.Done>Concluído</S.Done>
-    ) : (
-      <S.Button onClick={onClickProgress}>{buttonText}</S.Button>
-    )}
-  </S.Wrapper>
-);
+}) => {
+  return (
+    <S.Wrapper progress={progressPercent}>
+      <S.Title>{title}</S.Title>
+      <S.Progress>
+        {progress}/{total}
+      </S.Progress>
+      {progressPercent === "100" ? (
+        <S.Done>Concluído</S.Done>
+      ) : (
+        <S.Button onClick={onClickProgress}>{buttonText}</S.Button>
+      )}
+    </S.Wrapper>
+  );
+};
 
 export default ProgressCard;

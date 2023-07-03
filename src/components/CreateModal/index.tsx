@@ -12,7 +12,7 @@ interface CreateModalI {
 
 const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   const [form] = Form.useForm();
-  const { createTask, user } = useActions();
+  const { createGoal, createTask, user } = useActions();
   const [createAnother, setCreateAnother] = useState(false);
   const dateFormat = "DD/MM/YYYY";
 
@@ -22,7 +22,6 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
     deadline: string;
     another: boolean;
   }) => {
-    console.log(values);
     createTask(values.taskname, values.description, values.deadline);
     form.resetFields();
     if (!createAnother) {
@@ -34,12 +33,11 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   const onSubmitGoal = (values: {
     goalname: string;
     description: string;
-    deadline: string;
+    repetitions: string;
     another: boolean;
   }) => {
-    console.log(values);
-    // createTask(values.goalname, values.description, values.deadline);
-    // form.resetFields();
+    createGoal(values.goalname, values.repetitions, values.description);
+    form.resetFields();
     if (!createAnother) {
       closeModal();
       message.success("Meta criada com sucesso!");

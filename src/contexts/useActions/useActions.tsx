@@ -6,6 +6,8 @@ import {
   UserI,
   TrackI,
   TasksI,
+  GoalI,
+  HabitI,
 } from "./types";
 import {
   dateFormatterText,
@@ -14,67 +16,6 @@ import {
 } from "utils/formatters";
 
 export const ActionsContext = createContext({} as ActionsContextData);
-
-const defaultTrackI: TrackI = {
-  habits: [
-    { name: "Tomar o remédio", current: 1, total: 1 },
-    { name: "Refeições diárias", current: 2, total: 3 },
-    { name: "Bater o ponto", current: 3, total: 4 },
-    { name: "Não acumular tarefas - CIn", current: 1, total: 1 },
-  ],
-  goals: [
-    {
-      name: "Academia",
-      currentToday: 1,
-      current: 1,
-      total: 15,
-      totalToday: 1,
-    },
-    { name: "Faxina", currentToday: 0, current: 1, total: 4, totalToday: 1 },
-    {
-      name: "Ler Crianças Índigo",
-      currentToday: 0,
-      current: 50,
-      total: 177,
-      totalToday: 10,
-    },
-  ],
-};
-
-const defaultMap = new Map([
-  ["2023-06-19", defaultTrackI],
-  ["2023-06-20", defaultTrackI],
-  ["2023-06-21", defaultTrackI],
-  ["2023-06-22", defaultTrackI],
-  ["2023-06-23", defaultTrackI],
-  ["2023-06-24", defaultTrackI],
-  ["2023-06-25", defaultTrackI],
-  ["2023-06-26", defaultTrackI],
-  ["2023-06-27", defaultTrackI],
-  ["2023-06-28", defaultTrackI],
-  ["2023-06-29", defaultTrackI],
-  ["2023-06-30", defaultTrackI],
-  ["2023-06-31", defaultTrackI],
-  ["2023-07-01", defaultTrackI],
-  ["2023-07-02", defaultTrackI],
-  ["2023-07-03", defaultTrackI],
-  ["2023-07-04", defaultTrackI],
-  ["2023-07-05", defaultTrackI],
-  ["2023-07-06", defaultTrackI],
-  ["2023-07-07", defaultTrackI],
-  ["2023-07-08", defaultTrackI],
-  ["2023-07-09", defaultTrackI],
-  ["2023-07-10", defaultTrackI],
-  ["2023-07-11", defaultTrackI],
-  ["2023-07-12", defaultTrackI],
-  ["2023-07-13", defaultTrackI],
-  ["2023-07-14", defaultTrackI],
-  ["2023-07-15", defaultTrackI],
-  ["2023-07-16", defaultTrackI],
-  ["2023-07-17", defaultTrackI],
-  ["2023-07-18", defaultTrackI],
-  ["2023-07-19", defaultTrackI],
-]);
 
 const defaultUser: UserI = {
   name: "Lucas Melo",
@@ -104,58 +45,41 @@ const defaultUser: UserI = {
       timesADay: 1,
     },
   ],
-  goals: [
-    {
-      name: "Academia",
-      deadline: new Date(2023, 6, 19).toISOString(),
-      current: 1,
-      total: 15,
-    },
-    {
-      name: "Faxina",
-      deadline: new Date(2023, 6, 19).toISOString(),
-      current: 1,
-      total: 4,
-    },
-    {
-      name: "Ler Crianças Índigo",
-      deadline: new Date(2023, 6, 19).toISOString(),
-      current: 50,
-      total: 177,
-    },
-  ],
-  tasks: [
-    {
-      name: "Reiki",
-      description: "Sexta, às 9h",
-      status: false,
-      dateDone: null,
-      deadline: new Date(2023, 5, 23).toISOString(),
-    },
-    {
-      name: "Aluguel",
-      status: true,
-      dateDone: new Date(2023, 5, 19).toISOString(),
-    },
-    {
-      name: "Visitar Mário",
-      status: false,
-      deadline: new Date(2023, 5, 18).toISOString(),
-      dateDone: null,
-    },
-    {
-      name: "Show de Joelma",
-      description: "testando 7dias+",
-      status: false,
-      deadline: new Date(2023, 6, 1).toISOString(),
-      dateDone: null,
-    },
-  ],
+  goals: [],
+  tasks: [],
+};
+
+const updateTracker = (
+  goals: GoalI[],
+  habits: HabitI[],
+  startDate: string,
+  endDate: string
+) => {
+  const map = new Map();
+
+  const startAsDate = new Date(startDate);
+  const endAsDate = new Date(endDate);
+
+  while (startAsDate <= endAsDate) {
+    const dateString = startAsDate.toISOString().split("T")[0];
+
+    const habitsAndGoals = {
+      goals,
+      habits,
+    };
+
+    map.set(dateString, habitsAndGoals);
+    startAsDate.setDate(startAsDate.getDate() + 1);
+  }
+
+  return map;
 };
 
 export function ActionsProvider({
   children,
 }: ActionsProviderProps): JSX.Element {
+  const [tracker, setTracker] = useState(new Map());
+
   const [user, setUser] = useState<UserI>(() => {
     if (typeof window === "undefined") return defaultUser;
 
@@ -164,15 +88,37 @@ export function ActionsProvider({
     );
 
     if (storagedUser) {
+      const storagedTracker = localStorage.getItem("tracker")!;
+
+      if (storagedTracker) {
+        const parsedTracker: Map<any, any> = JSON.parse(storagedTracker);
+        setTracker(parsedTracker);
+      } else {
+        setTracker(
+          updateTracker(
+            storagedUser.goals,
+            storagedUser.habits,
+            storagedUser.startDate,
+            storagedUser.endDate
+          )
+        );
+      }
+
       // localStorage.setItem("storagedUser", JSON.stringify(storagedUser));
       return storagedUser;
     }
 
     // localStorage.setItem("storagedUser", JSON.stringify(defaultUser));
+    setTracker(
+      updateTracker(
+        defaultUser.goals,
+        defaultUser.habits,
+        defaultUser.startDate,
+        defaultUser.endDate
+      )
+    );
     return defaultUser;
   });
-
-  const [tracker, setTracker] = useState(defaultMap);
 
   const today = new Date();
 
@@ -233,19 +179,53 @@ export function ActionsProvider({
       tasks: newTasks,
     };
 
-    console.log(newUserData);
-
     setUser(newUserData);
   };
 
+  const createGoal = (
+    name: string,
+    repetitions: string,
+    description?: string
+  ) => {
+    const newGoal: GoalI = {
+      name,
+      description,
+      total: Number(repetitions),
+      current: 0,
+      deadline: user.endDate,
+    };
+
+    const newUserData: UserI = {
+      ...user,
+      goals: [...user.goals, newGoal],
+    };
+
+    setUser(newUserData);
+    updateTracker(
+      [...user.goals, newGoal],
+      user.habits,
+      user.startDate,
+      user.endDate
+    );
+  };
+
   useEffect(() => {
-    // localStorage.setItem("storagedUser", JSON.stringify(user));
-    console.log(user);
+    localStorage.setItem("storagedUser", JSON.stringify(user));
+    localStorage.setItem("tracker", JSON.stringify(tracker));
+    updateTracker(user.goals, user.habits, user.startDate, user.endDate);
   }, [user]);
 
   return (
     <ActionsContext.Provider
-      value={{ user, tracker, details, createTask, deleteTask, toggleTask }}
+      value={{
+        user,
+        tracker,
+        details,
+        createTask,
+        deleteTask,
+        toggleTask,
+        createGoal,
+      }}
     >
       {children}
     </ActionsContext.Provider>

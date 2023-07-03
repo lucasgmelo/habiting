@@ -7,30 +7,20 @@ import { useActions } from "contexts/useActions/useActions";
 import { useState } from "react";
 import * as S from "./styles";
 import ProgressModal from "components/ProgressModal";
-import { GeneralActionI } from "contexts/useActions/types";
+import { GeneralActionI, GoalI, HabitI } from "contexts/useActions/types";
 
 const Default = () => {
   const { user, details, tracker } = useActions();
+
   const [formattedActions, setFormattedActions] = useState<GeneralActionI[]>(
     () => {
-      const todayActions = tracker.get(details.todayKey);
+      const todayActions: { habits: HabitI[]; goals: GoalI[] } = tracker.get(
+        details.todayKey
+      ) || { habits: [], goals: [] };
 
       if (todayActions) {
         const goalsActions = todayActions?.goals.map((goal) => {
-          return {
-            title: goal.name,
-            progress: goal.currentToday,
-            total: goal.totalToday,
-            progressPercent: goal.currentToday / goal.totalToday,
-            text:
-              goal.currentToday / goal.totalToday === 1
-                ? "Concluído"
-                : "Adicionar progresso",
-          };
-        });
-
-        const habitsAction = todayActions?.habits.map((goal) => {
-          return {
+          const goalAction = {
             title: goal.name,
             progress: goal.current,
             total: goal.total,
@@ -40,9 +30,24 @@ const Default = () => {
                 ? "Concluído"
                 : "Adicionar progresso",
           };
+
+          return goalAction;
         });
 
-        return [...goalsActions, ...habitsAction].sort((a, b) => {
+        const habitsActions = todayActions?.habits.map((habit) => {
+          console.log(habit);
+
+          return {
+            title: habit.name,
+            progress: 0,
+            total: habit.timesADay,
+            progressPercent: 0 / habit.timesADay,
+            text:
+              0 / habit.timesADay === 1 ? "Concluído" : "Adicionar progresso",
+          };
+        });
+
+        return [...goalsActions, ...habitsActions].sort((a, b) => {
           if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
           if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
           return 0;
@@ -121,17 +126,19 @@ const Default = () => {
       </S.WidgetGrid>
       <S.ActionsTitle>Ações</S.ActionsTitle>
       <S.Grid>
-        {sortActions(formattedActions).map((action) => (
-          <ProgressCard
-            key={action.title}
-            title={action.title}
-            progress={String(action.progress)}
-            total={String(action.total)}
-            progressPercent={String(action.progressPercent * 100)}
-            buttonText={action.text}
-            onClickProgress={() => onClickProgress(action)}
-          />
-        ))}
+        {sortActions(formattedActions).map((action) => {
+          return (
+            <ProgressCard
+              key={action.title}
+              title={action.title}
+              progress={String(action.progress)}
+              total={String(action.total)}
+              progressPercent={String(action.progressPercent * 100)}
+              buttonText={action.text}
+              onClickProgress={() => onClickProgress(action)}
+            />
+          );
+        })}
       </S.Grid>
       <S.ActionsTitle>Tarefas</S.ActionsTitle>
       <S.TasksGrid>

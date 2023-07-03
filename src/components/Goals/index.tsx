@@ -1,9 +1,10 @@
 import CardIcon from "components/CardIcon";
 import * as S from "./styles";
-import { QuillPen, Seedling } from "@styled-icons/remix-fill";
+import { Add, QuillPen, Seedling } from "@styled-icons/remix-fill";
 import CustomTable from "components/CustomTable";
-import { Progress } from "antd";
+import { Button, Progress } from "antd";
 import { useActions } from "contexts/useActions/useActions";
+import { DeleteBin4 } from "@styled-icons/remix-line";
 
 type AlignType = "center" | "left" | "right";
 
@@ -99,9 +100,21 @@ const Goals = () => {
       dataIndex: "update",
       key: "update",
       render: (update: number) => (
-        <S.Button>
-          <QuillPen />
-        </S.Button>
+        <S.UpdateButton>
+          <Add />
+        </S.UpdateButton>
+      ),
+      align: "center" as AlignType,
+      width: 64,
+    },
+    {
+      title: "Deletar",
+      dataIndex: "delete",
+      key: "delete",
+      render: (update: number) => (
+        <S.DeleteButton>
+          <DeleteBin4 />
+        </S.DeleteButton>
       ),
       align: "center" as AlignType,
       width: 64,

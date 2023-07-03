@@ -22,8 +22,6 @@ const TaskCard: FC<TaskCardI> = ({
   const { deleteTask, toggleTask } = useActions();
   const [checked, setChecked] = useState(initialStatus);
 
-  console.log(!!deadline && !checked);
-
   const onCheck = () => {
     toggleTask(title, !checked);
     setChecked(!checked);

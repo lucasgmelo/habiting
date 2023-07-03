@@ -70,16 +70,40 @@ export const DetailsContainer = styled.div`
   }
 `;
 
-export const Button = styled.button`
+export const UpdateButton = styled.button`
   outline: none;
   border: none;
 
   padding: 8px 8px;
   border-radius: 5px;
 
-  color: #fff;
+  color: ${({ theme }) => theme.colors.primary};
 
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: transparent;
+  box-shadow: ${({ theme }) => theme.shadows.main};
+
+  cursor: pointer;
+
+  svg {
+    width: 16px;
+  }
+`;
+
+export const DeleteButton = styled.button`
+  outline: none;
+  border: none;
+
+  padding: 8px 8px;
+  border-radius: 5px;
+
+  color: ${({ theme }) => theme.colors.gray};
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.systemRed};
+  }
+
+  background-color: transparent;
   box-shadow: ${({ theme }) => theme.shadows.main};
 
   cursor: pointer;
