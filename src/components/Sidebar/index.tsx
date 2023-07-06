@@ -17,9 +17,9 @@ const Sidebar = () => {
 
   const routes = {
     home: "/",
-    dashboard: "/dashboard",
-    goals: "/metas",
-    habits: "/habitos",
+    // dashboard: "/dashboard",
+    // goals: "/metas",
+    // habits: "/habitos",
     tasks: "/tarefas",
     epics: "/epicos",
   };
@@ -33,24 +33,6 @@ const Sidebar = () => {
           <S.Item active={router.pathname === routes.home}>
             <Home2 />
             <p>Início</p>
-          </S.Item>
-        </Link>
-        <Link href={routes.dashboard}>
-          <S.Item active={router.pathname === routes.dashboard}>
-            <Scan />
-            <p>Dashboard</p>
-          </S.Item>
-        </Link>
-        <Link href={routes.goals}>
-          <S.Item active={router.pathname === routes.goals}>
-            <LineChart />
-            <p>Metas</p>
-          </S.Item>
-        </Link>
-        <Link href={routes.habits}>
-          <S.Item active={router.pathname === routes.habits}>
-            <Service />
-            <p>Hábitos</p>
           </S.Item>
         </Link>
         <Link href={routes.tasks}>

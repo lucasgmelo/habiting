@@ -12,62 +12,62 @@ import { GeneralActionI, GoalI, HabitI } from "contexts/useActions/types";
 const Default = () => {
   const { user, details, tracker } = useActions();
 
-  const [formattedActions, setFormattedActions] = useState<GeneralActionI[]>(
-    () => {
-      const todayActions: { habits: HabitI[]; goals: GoalI[] } = tracker.get(
-        details.todayKey
-      ) || { habits: [], goals: [] };
+  // const [formattedActions, setFormattedActions] = useState<GeneralActionI[]>(
+  //   () => {
+  //     const todayActions: { habits: HabitI[]; goals: GoalI[] } = tracker.get(
+  //       details.todayKey
+  //     ) || { habits: [], goals: [] };
 
-      if (todayActions) {
-        const goalsActions = todayActions?.goals.map((goal) => {
-          const goalAction = {
-            title: goal.name,
-            progress: goal.current,
-            total: goal.total,
-            progressPercent: goal.current / goal.total,
-            text:
-              goal.current / goal.total === 1
-                ? "Concluído"
-                : "Adicionar progresso",
-          };
+  //     if (todayActions) {
+  //       const goalsActions = todayActions?.goals.map((goal) => {
+  //         const goalAction = {
+  //           title: goal.name,
+  //           progress: goal.current,
+  //           total: goal.total,
+  //           progressPercent: goal.current / goal.total,
+  //           text:
+  //             goal.current / goal.total === 1
+  //               ? "Concluído"
+  //               : "Adicionar progresso",
+  //         };
 
-          return goalAction;
-        });
+  //         return goalAction;
+  //       });
 
-        const habitsActions = todayActions?.habits.map((habit) => {
-          console.log(habit);
+  //       const habitsActions = todayActions?.habits.map((habit) => {
+  //         console.log(habit);
 
-          return {
-            title: habit.name,
-            progress: 0,
-            total: habit.timesADay,
-            progressPercent: 0 / habit.timesADay,
-            text:
-              0 / habit.timesADay === 1 ? "Concluído" : "Adicionar progresso",
-          };
-        });
+  //         return {
+  //           title: habit.name,
+  //           progress: 0,
+  //           total: habit.timesADay,
+  //           progressPercent: 0 / habit.timesADay,
+  //           text:
+  //             0 / habit.timesADay === 1 ? "Concluído" : "Adicionar progresso",
+  //         };
+  //       });
 
-        return [...goalsActions, ...habitsActions].sort((a, b) => {
-          if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
-          if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
-          return 0;
-        });
-      }
+  //       return [...goalsActions, ...habitsActions].sort((a, b) => {
+  //         if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
+  //         if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
+  //         return 0;
+  //       });
+  //     }
 
-      return [];
-    }
-  );
+  //     return [];
+  //   }
+  // );
   const [formattedTasks, setFormattedTasks] = useState(user.tasks);
   const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState<GeneralActionI>();
 
-  const sortActions = (actions: typeof formattedActions) => {
-    return actions.sort((a, b) => {
-      if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
-      if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
-      return 0;
-    });
-  };
+  // const sortActions = (actions: typeof formattedActions) => {
+  //   return actions.sort((a, b) => {
+  //     if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
+  //     if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
+  //     return 0;
+  //   });
+  // };
 
   const sortTasks = (actions: typeof formattedTasks) => {
     return actions.sort((a, b) => {
@@ -77,12 +77,12 @@ const Default = () => {
     });
   };
 
-  const generalAnalytics = {
-    actionsDone: formattedActions.filter(
-      (action) => action.progressPercent >= 1
-    ).length,
-    totalActions: formattedActions.length,
-  };
+  // const generalAnalytics = {
+  //   actionsDone: formattedActions.filter(
+  //     (action) => action.progressPercent >= 1
+  //   ).length,
+  //   totalActions: formattedActions.length,
+  // };
 
   const onClickProgress = (action: GeneralActionI) => {
     setCurrentAction(action);
@@ -102,7 +102,7 @@ const Default = () => {
         Olá, <span>{user.name}</span>. {details.salutation}
       </S.Title>
       <S.Subtitle>{details.day}</S.Subtitle>
-      <S.WidgetGrid>
+      {/* <S.WidgetGrid>
         <CardChart
           current={generalAnalytics.actionsDone}
           total={generalAnalytics.totalActions}
@@ -123,10 +123,10 @@ const Default = () => {
             <span>Academia</span>
           </S.WidgetBigTitle>
         </CardIcon>
-      </S.WidgetGrid>
+      </S.WidgetGrid> */}
       <S.ActionsTitle>Ações</S.ActionsTitle>
       <S.Grid>
-        {sortActions(formattedActions).map((action) => {
+        {/* {sortActions(formattedActions).map((action) => {
           return (
             <ProgressCard
               key={action.title}
@@ -138,7 +138,7 @@ const Default = () => {
               onClickProgress={() => onClickProgress(action)}
             />
           );
-        })}
+        })} */}
       </S.Grid>
       <S.ActionsTitle>Tarefas</S.ActionsTitle>
       <S.TasksGrid>
