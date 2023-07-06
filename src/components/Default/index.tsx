@@ -124,9 +124,9 @@ const Default = () => {
           </S.WidgetBigTitle>
         </CardIcon>
       </S.WidgetGrid> */}
-      <S.ActionsTitle>Ações</S.ActionsTitle>
-      <S.Grid>
-        {/* {sortActions(formattedActions).map((action) => {
+      {/* <S.ActionsTitle>Ações</S.ActionsTitle> */}
+      {/* <S.Grid>
+        {sortActions(formattedActions).map((action) => {
           return (
             <ProgressCard
               key={action.title}
@@ -138,9 +138,9 @@ const Default = () => {
               onClickProgress={() => onClickProgress(action)}
             />
           );
-        })} */}
-      </S.Grid>
-      <S.ActionsTitle>Tarefas</S.ActionsTitle>
+        })}
+      </S.Grid> */}
+      <S.ActionsTitle>Tarefas pendentes</S.ActionsTitle>
       <S.TasksGrid>
         {sortTasks(user.tasks).map((task) => (
           <TaskCard
