@@ -6,26 +6,12 @@ import { Spin, message } from "antd";
 import api from "api";
 
 const Tasks = () => {
-  const { user } = useActions();
+  const { user, getTasks } = useActions();
 
   const [loadingTasks, setLoadingTasks] = useState(false);
 
-  const getTasks = async () => {
-    try {
-      setLoadingTasks(true);
-
-      const { data } = await api.get("/tasks");
-
-      console.log(data);
-    } catch {
-      message.error("Erro ao localizar tasks");
-    } finally {
-      setLoadingTasks(false);
-    }
-  };
-
   useEffect(() => {
-    getTasks();
+    getTasks("1");
   }, []);
 
   return (

@@ -2,7 +2,7 @@ import { FC, Fragment, useState } from "react";
 import * as S from "./styles";
 import { Button, Checkbox, DatePicker, Form, Input, message } from "antd";
 import { useActions } from "contexts/useActions/useActions";
-import { formatStringToDeadline } from "utils/formatters";
+import { dateFromIsoToApi, formatStringToDeadline } from "utils/formatters";
 import { ArrowRight } from "@styled-icons/remix-line";
 
 interface CreateModalI {
@@ -20,10 +20,14 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   const onSubmitTask = (values: {
     taskname: string;
     description: string;
-    deadline: string;
+    deadline: { ["$d"]: Date };
     another: boolean;
   }) => {
-    createTask(values.taskname, values.description, values.deadline);
+    createTask(
+      values.taskname,
+      values.description,
+      dateFromIsoToApi(values.deadline["$d"].toISOString())
+    );
     form.resetFields();
     if (!createAnother) {
       closeModal();
@@ -87,7 +91,7 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
             </Form.Item>
 
             <Form.Item label="Prazo final" name="deadline">
-              <DatePicker placeholder="Selecionar data" format={dateFormat} />
+              <DatePicker placeholder="Selecionar data" />
             </Form.Item>
 
             <div className="footer">

@@ -28,6 +28,10 @@ export const dateFormatterText = (date: Date) => {
   );
 };
 
+export const dateFromIsoToApi = (date: string) => {
+  return date.split("T")[0];
+};
+
 export const dateFormatterNumber = (date: string) => {
   const dateFormat = new Date(date);
   return new Intl.DateTimeFormat("pt-BR").format(dateFormat);

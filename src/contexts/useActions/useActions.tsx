@@ -11,6 +11,8 @@ import {
   TasksI,
   UserI,
 } from "./types";
+import api from "api";
+import { message } from "antd";
 
 export const ActionsContext = createContext({} as ActionsContextData);
 
@@ -36,6 +38,9 @@ export function ActionsProvider({
     return defaultUser;
   });
 
+  const [loadingTasks, setLoadingTasks] = useState(false);
+  const [loadingCreatingTask, setLoadingCreatingTask] = useState(false);
+
   const today = new Date();
 
   const details = {
@@ -44,26 +49,51 @@ export function ActionsProvider({
     todayKey: getTrackerKey(today),
   };
 
-  const createTask = (
+  const getTasks = async () => {
+    try {
+      setLoadingTasks(true);
+
+      const { data } = await api.get("/tasks");
+
+      setUser({ ...user, tasks: data });
+    } catch {
+      message.error("Erro ao localizar tasks");
+    } finally {
+      setLoadingTasks(false);
+    }
+  };
+
+  const createTask = async (
     name: string,
     description?: string,
     deadline?: string
   ) => {
-    const newTask: TasksI = {
-      id: "test",
-      name,
-      description,
-      status: false,
-      dueDate: deadline,
-      epic: null,
-    };
+    try {
+      setLoadingCreatingTask(true);
+      const newTask: Omit<TasksI, "id"> = {
+        name,
+        description,
+        status: false,
+        dueDate: deadline,
+        epic: null,
+        userId: "1",
+      };
 
-    const newUserData = {
-      ...user,
-      tasks: [...user.tasks, newTask],
-    };
+      const { data } = await api.post("/tasks", newTask);
 
-    setUser(newUserData);
+      const newUserData = {
+        ...user,
+        tasks: [...user.tasks, data],
+      };
+
+      setUser(newUserData);
+    } catch {
+      message.error(
+        "Não foi possível criar a tarefa, tente novamente mais tarde"
+      );
+    } finally {
+      setLoadingCreatingTask(false);
+    }
   };
 
   const deleteTask = (name: string) => {
@@ -104,6 +134,9 @@ export function ActionsProvider({
       value={{
         user,
         details,
+        loadingTasks,
+        loadingCreatingTask,
+        getTasks,
         createTask,
         deleteTask,
         toggleTask,
