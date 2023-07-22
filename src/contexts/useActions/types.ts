@@ -1,47 +1,17 @@
 import { ReactNode } from "react";
 
-export interface GoalI {
-  name: string;
-  description?: string;
-  deadline: string;
-  current: number;
-  total: number;
-}
-
 export interface TasksI {
+  id: string;
   name: string;
   description?: string;
   status: boolean;
-  deadline?: string;
-  dateDone: null | string;
+  dueDate?: string;
+  epic: null | string;
 }
 
-export interface HabitI {
-  name: string;
-  description?: string;
-  dayAssigned: string;
-  timesADay: number;
-}
-
-export interface TrackI {
-  goals: GoalI[];
-  habits: HabitI[];
-}
-
-export interface GeneralActionI {
-  title: string;
-  progress: number;
-  total: number;
-  progressPercent: number;
-  text: string;
-}
 export interface UserI {
   name: string;
   photo: string;
-  startDate: string;
-  endDate: string;
-  goals: GoalI[];
-  habits: HabitI[];
   tasks: TasksI[];
 }
 
@@ -52,8 +22,6 @@ export interface ActionsContextData {
     todayKey: string;
   };
   user: UserI;
-  tracker: Map<string, TrackI>;
-  createGoal: (name: string, repetitions: string, description?: string) => void;
   createTask: (name: string, description?: string, deadline?: string) => void;
   deleteTask: (name: string) => void;
   toggleTask: (name: string, newStatus: boolean) => void;

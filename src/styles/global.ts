@@ -13,8 +13,24 @@ const GlobalStyles = createGlobalStyle`
   }
 
   ${({ theme }) => css`
-    html {
-      font-size: 62.5%;
+    ::-webkit-scrollbar {
+      width: 16px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: ${theme.colors.gray};
+      background-clip: content-box;
+
+      border: 5px solid transparent;
+      border-radius: 100px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #8295b6;
     }
 
     body {

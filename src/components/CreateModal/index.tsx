@@ -3,6 +3,7 @@ import * as S from "./styles";
 import { Button, Checkbox, DatePicker, Form, Input, message } from "antd";
 import { useActions } from "contexts/useActions/useActions";
 import { formatStringToDeadline } from "utils/formatters";
+import { ArrowRight } from "@styled-icons/remix-line";
 
 interface CreateModalI {
   open: boolean;
@@ -12,7 +13,7 @@ interface CreateModalI {
 
 const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   const [form] = Form.useForm();
-  const { createGoal, createTask, user } = useActions();
+  const { createTask, user } = useActions();
   const [createAnother, setCreateAnother] = useState(false);
   const dateFormat = "DD/MM/YYYY";
 
@@ -30,17 +31,19 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
     }
   };
 
-  const onSubmitGoal = (values: {
-    goalname: string;
+  const onSubmitEpic = (values: {
+    taskname: string;
     description: string;
-    repetitions: string;
+    deadline: string;
     another: boolean;
   }) => {
-    createGoal(values.goalname, values.repetitions, values.description);
+    // createTask(values.taskname, values.description, values.deadline);
+    console.log(values);
+
     form.resetFields();
     if (!createAnother) {
       closeModal();
-      message.success("Meta criada com sucesso!");
+      message.success("Épico criado com sucesso!");
     }
   };
 
@@ -112,31 +115,29 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
         </Fragment>
       );
 
-    if (createMode === "goal")
+    if (createMode === "epic")
       return (
         <Fragment>
-          <h1>Criar meta</h1>
+          <h1>Criar épico</h1>
           <h3>
-            Ideal para monitorar seus objetivos. Se encaixa bem com ações que
-            possuem um marco tangível de finalização.
-            <br />
-            ex: ir 200x na academia, ler 12 livros, investir 1000 reais...
+            Específico para agrupar tarefas e acompanhar o progresso de um
+            grande objetivo
           </h3>
 
-          <Form layout="vertical" form={form} onFinish={onSubmitGoal}>
+          <Form layout="vertical" form={form} onFinish={onSubmitEpic}>
             <Form.Item
               label="Nome"
-              name="goalname"
+              name="taskname"
               required
               rules={[
                 {
                   required: true,
-                  message: "Por favor, insira o nome da meta.",
+                  message: "Por favor, insira o nome do épico.",
                 },
                 {
-                  message: "Já existe uma meta com esse nome",
+                  message: "Já existe um épico com esse nome",
                   validator: (_: unknown, value: string) => {
-                    if (user.goals.find((goal) => goal.name === value)) {
+                    if (user.tasks.find((task) => task.name === value)) {
                       return Promise.reject();
                     }
 
@@ -145,45 +146,69 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 },
               ]}
             >
-              <Input placeholder="Nome da meta" />
+              <Input placeholder="Nome do épico" />
             </Form.Item>
 
             <Form.Item label="Descrição" name="description">
-              <Input placeholder="Descrição da meta (opcional)" />
+              <Input placeholder="Descrição do épico (opcional)" />
             </Form.Item>
 
-            <Form.Item
-              label="Repetições"
-              name="repetitions"
-              required
-              rules={[
-                {
-                  required: true,
-                  message: "Por favor, insira a quantidade de repetições.",
-                },
-              ]}
-            >
-              <Input
-                type="number"
-                min={1}
-                placeholder="Vezes que a ação será realizada"
-              />
+            <Form.Item label="Prazo final" name="deadline">
+              <DatePicker placeholder="Selecionar data" format={dateFormat} />
             </Form.Item>
 
-            <p>
-              O seu prazo final para esse perfil é{" "}
-              <span className="detail">
-                {formatStringToDeadline(user.endDate)}
-              </span>
-              , crie metas factíveis!
-            </p>
+            <h1>Vincular tarefas ao épico</h1>
+            <h3>
+              Adicione tarefas existentes a esse épico, você também pode fazer
+              isso mais tarde. Cada tarefa só pode pertencer a um épico.
+            </h3>
+
+            <S.Columns>
+              <div>
+                <p>Adicionadas</p>
+                <S.TaskContainer>
+                  <S.Task>
+                    <div>
+                      <p>teste</p>
+                      <p>123</p>
+                    </div>
+                    <S.ArrowButton included type="button">
+                      <ArrowRight size={16} />
+                    </S.ArrowButton>
+                  </S.Task>
+                  <S.Task>
+                    <div>
+                      <p>teste</p>
+                      <p>123</p>
+                    </div>
+                    <S.ArrowButton included type="button">
+                      <ArrowRight size={16} />
+                    </S.ArrowButton>
+                  </S.Task>
+                </S.TaskContainer>
+              </div>
+              <div>
+                <p>Disponíveis</p>
+                <S.TaskContainer>
+                  <S.Task>
+                    <div>
+                      <p>teste</p>
+                      <p>123</p>
+                    </div>
+                    <S.ArrowButton included={false} type="button">
+                      <ArrowRight size={16} />
+                    </S.ArrowButton>
+                  </S.Task>
+                </S.TaskContainer>
+              </div>
+            </S.Columns>
 
             <div className="footer">
               <Checkbox
                 checked={createAnother}
                 onChange={() => setCreateAnother(!createAnother)}
               >
-                Criar outra meta
+                Criar outro épico
               </Checkbox>
               <div className="buttons">
                 <Button
@@ -210,6 +235,7 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
       onCancel={closeModal}
       cancelText="Cancelar"
       footer={null}
+      width={600}
     >
       {renderContent()}
     </S.Wrapper>
