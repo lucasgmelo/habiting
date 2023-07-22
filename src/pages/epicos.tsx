@@ -1,10 +1,10 @@
 import Layout from "components/Layout";
-import Tasks from "components/Tasks";
+import Epics from "components/Epics";
 
 export default function Home() {
   return (
     <Layout>
-      <Tasks />
+      <Epics />
     </Layout>
   );
 }

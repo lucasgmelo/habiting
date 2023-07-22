@@ -1,16 +1,16 @@
-import { Fire, Lightbulb } from "@styled-icons/remix-fill";
-import CardChart from "components/CardChart";
-import CardIcon from "components/CardIcon";
-import ProgressCard from "components/ProgressCard";
+import ProgressModal from "components/ProgressModal";
 import TaskCard from "components/TaskCard";
 import { useActions } from "contexts/useActions/useActions";
 import { useState } from "react";
 import * as S from "./styles";
-import ProgressModal from "components/ProgressModal";
-import { GeneralActionI, GoalI, HabitI } from "contexts/useActions/types";
+import { TasksI } from "contexts/useActions/types";
+import ProgressCard from "components/ProgressCard";
+import CardChart from "components/CardChart";
+import CardIcon from "components/CardIcon";
+import { Fire, Lightbulb } from "@styled-icons/remix-fill";
 
 const Default = () => {
-  const { user, details, tracker } = useActions();
+  const { user, details } = useActions();
 
   // const [formattedActions, setFormattedActions] = useState<GeneralActionI[]>(
   //   () => {
@@ -59,9 +59,8 @@ const Default = () => {
   // );
   const [formattedTasks, setFormattedTasks] = useState(user.tasks);
   const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
-  const [currentAction, setCurrentAction] = useState<GeneralActionI>();
 
-  // const sortActions = (actions: typeof formattedActions) => {
+  // const = (action: typeof formattedActions) => {
   //   return actions.sort((a, b) => {
   //     if (a.progressPercent === 1 && !(b.progressPercent === 1)) return 1;
   //     if (!(a.progressPercent === 1) && b.progressPercent === 1) return -1;
@@ -77,70 +76,53 @@ const Default = () => {
     });
   };
 
-  // const generalAnalytics = {
-  //   actionsDone: formattedActions.filter(
-  //     (action) => action.progressPercent >= 1
-  //   ).length,
-  //   totalActions: formattedActions.length,
-  // };
-
-  const onClickProgress = (action: GeneralActionI) => {
-    setCurrentAction(action);
-    setIsProgressModalOpen(true);
+  const generalAnalytics = {
+    actionsDone: user.tasks.filter((action) => action.status === true).length,
+    totalActions: user.tasks.length,
   };
+
+  // const onClickProgress = (action: TasksI) => {
+  //   setCurrentAction(action);
+  //   setIsProgressModalOpen(true);
+  // };
 
   return (
     <S.Wrapper>
-      <ProgressModal
+      {/* <ProgressModal
         open={isProgressModalOpen}
         onOk={() => {}}
         action={currentAction}
         closeModal={() => setIsProgressModalOpen(false)}
-      />
+      /> */}
 
       <S.Title>
         Olá, <span>{user.name}</span>. {details.salutation}
       </S.Title>
       <S.Subtitle>{details.day}</S.Subtitle>
-      {/* <S.WidgetGrid>
+      <S.WidgetGrid>
         <CardChart
           current={generalAnalytics.actionsDone}
           total={generalAnalytics.totalActions}
         />
         <CardIcon IconComponent={<Fire />} bgColor="#E83F5B">
           <S.WidgetBigTitle>
-            Sequência de <span>8 dias</span>
-            <br /> consecutivos indo bem!
+            Você concluiu um total de <span>8 tarefas</span>
+            <br /> nos últimos 30 dias
           </S.WidgetBigTitle>
-          <S.WidgetDescription>Seu recorde é 22 dias</S.WidgetDescription>
+          <S.WidgetDescription>
+            Ser consistente é mais importante do que ser apenas produtivo
+          </S.WidgetDescription>
         </CardIcon>
         <CardIcon IconComponent={<Lightbulb />} bgColor="#FFC779">
           <S.WidgetBigTitle>
-            A ação que você tem sido
-            <br /> mais consistente foi
+            Você possui 7 tarefas com prazo para hoje
           </S.WidgetBigTitle>
           <S.WidgetBigTitle>
-            <span>Academia</span>
+            <span>Monitore seus hábitos</span>
           </S.WidgetBigTitle>
         </CardIcon>
-      </S.WidgetGrid> */}
-      {/* <S.ActionsTitle>Ações</S.ActionsTitle> */}
-      {/* <S.Grid>
-        {sortActions(formattedActions).map((action) => {
-          return (
-            <ProgressCard
-              key={action.title}
-              title={action.title}
-              progress={String(action.progress)}
-              total={String(action.total)}
-              progressPercent={String(action.progressPercent * 100)}
-              buttonText={action.text}
-              onClickProgress={() => onClickProgress(action)}
-            />
-          );
-        })}
-      </S.Grid> */}
-      <S.ActionsTitle>Tarefas pendentes</S.ActionsTitle>
+      </S.WidgetGrid>
+      <S.ActionsTitle>Tarefas dos últimos 30 dias</S.ActionsTitle>
       <S.TasksGrid>
         {sortTasks(user.tasks).map((task) => (
           <TaskCard
@@ -148,7 +130,7 @@ const Default = () => {
             title={task.name}
             initialStatus={task.status}
             description={task.description}
-            deadline={task.deadline}
+            deadline={task.dueDate}
           />
         ))}
       </S.TasksGrid>
