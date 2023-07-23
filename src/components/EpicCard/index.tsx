@@ -1,15 +1,9 @@
 import { FC } from "react";
 import * as S from "./styles";
 import { Progress } from "antd";
+import { EpicsI } from "contexts/useActions/types";
 
-interface EpicCardI {
-  name: string;
-  description?: string;
-  current: number;
-  total: number;
-}
-
-const EpicCard: FC<EpicCardI> = ({ name, description, current, total }) => (
+const EpicCard: FC<EpicsI> = ({ name, description, current, total }) => (
   <S.Wrapper>
     <h4>{name}</h4>
     <p>{description}</p>

@@ -10,10 +10,18 @@ export interface TasksI {
   userId: string;
 }
 
+export interface EpicsI {
+  name: string;
+  description?: string;
+  current: number;
+  total: number;
+}
+
 export interface UserI {
   name: string;
   photo: string;
   tasks: TasksI[];
+  epics: EpicsI[];
 }
 
 export interface ActionsContextData {
@@ -24,8 +32,10 @@ export interface ActionsContextData {
   };
   user: UserI;
   loadingTasks: boolean;
+  loadingEpics: boolean;
   loadingCreatingTask: boolean;
   getTasks: (userId: string) => void;
+  getEpics: (userId: string) => void;
   createTask: (name: string, description?: string, deadline?: string) => void;
   deleteTask: (name: string) => void;
   toggleTask: (name: string, newStatus: boolean) => void;

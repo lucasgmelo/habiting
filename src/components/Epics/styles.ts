@@ -1,6 +1,10 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.div``;
+export const Wrapper = styled.div`
+  & > p {
+    margin-top: 16px;
+  }
+`;
 
 export const EpicsContainer = styled.div`
   display: flex;
