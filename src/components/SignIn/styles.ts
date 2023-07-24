@@ -96,6 +96,7 @@ export const Container = styled.div`
 
     a {
       text-decoration: none;
+      font-weight: 500;
       color: ${({ theme }) => theme.colors.darkPrimary};
     }
   }

@@ -47,7 +47,7 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
     deadline: string;
     another: boolean;
   }) => {
-    // createTask(values.taskname, values.description, values.deadline);
+    createEpic(values.taskname, values.description);
     console.log(values);
 
     form.resetFields();

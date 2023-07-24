@@ -38,7 +38,7 @@ const SignUp = () => {
           <S.Buttons>
             <Button block size="large" onClick={login}>
               <GoogleLogo />
-              Cadastrar com o Googlee
+              Cadastrar com o Google
             </Button>
           </S.Buttons>
           <S.Divider>

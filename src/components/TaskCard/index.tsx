@@ -3,7 +3,7 @@ import { FC, useState } from "react";
 import { formatStringToDate, formatStringToDeadline } from "utils/formatters";
 import * as S from "./styles";
 import { Button, message } from "antd";
-import { DeleteBin4 } from "@styled-icons/remix-line";
+import { DeleteBin4, Edit } from "@styled-icons/remix-line";
 import { useActions } from "contexts/useActions/useActions";
 
 interface TaskCardI {
@@ -42,6 +42,9 @@ const TaskCard: FC<TaskCardI> = ({
           </p>
         )}
 
+        <button className="edit" onClick={() => {}}>
+          <Edit size={16} />
+        </button>
         <button
           className="delete"
           onClick={() => {

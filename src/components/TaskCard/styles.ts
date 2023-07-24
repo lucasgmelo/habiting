@@ -66,4 +66,21 @@ export const FloatingContainer = styled.div<{ late?: boolean }>`
       }
     }
   }
+
+  .edit {
+    background: transparent;
+    cursor: pointer;
+    border: none;
+    outline: none;
+
+    svg {
+      color: ${({ theme }) => theme.colors.gray};
+
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: ${({ theme }) => theme.colors.primary};
+      }
+    }
+  }
 `;
