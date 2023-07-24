@@ -7,6 +7,7 @@ export interface TasksI {
   status: boolean;
   dueDate?: string;
   epic: null | string;
+  userId?: string;
 }
 
 export interface EpicsI {
