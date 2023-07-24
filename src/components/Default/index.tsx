@@ -107,7 +107,7 @@ const Default = () => {
         <CardIcon IconComponent={<Fire />} bgColor="#E83F5B">
           <S.WidgetBigTitle>
             Você concluiu um total de <span>8 tarefas</span>
-            <br /> nos últimos 30 dias
+            <br /> nos últimos 7 dias
           </S.WidgetBigTitle>
           <S.WidgetDescription>
             Ser consistente é mais importante do que ser apenas produtivo
@@ -122,16 +122,10 @@ const Default = () => {
           </S.WidgetBigTitle>
         </CardIcon>
       </S.WidgetGrid>
-      <S.ActionsTitle>Tarefas dos últimos 30 dias</S.ActionsTitle>
+      <S.ActionsTitle>Tarefas dos últimos 7 dias</S.ActionsTitle>
       <S.TasksGrid>
         {sortTasks(user.tasks).map((task) => (
-          <TaskCard
-            key={task.name}
-            title={task.name}
-            initialStatus={task.status}
-            description={task.description}
-            deadline={task.dueDate}
-          />
+          <TaskCard key={task.name} task={task} />
         ))}
       </S.TasksGrid>
     </S.Wrapper>

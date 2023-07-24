@@ -7,7 +7,6 @@ export interface TasksI {
   status: boolean;
   dueDate?: string;
   epic: null | string;
-  userId: string;
 }
 
 export interface EpicsI {
@@ -31,12 +30,15 @@ export interface ActionsContextData {
     todayKey: string;
   };
   user: UserI;
+  epic: EpicsI | undefined;
   loadingTasks: boolean;
+  loadingEpic: boolean;
   loadingEpics: boolean;
   loadingCreatingTask: boolean;
   loadingCreatingEpic: boolean;
-  getTasks: (userId: string) => void;
-  getEpics: (userId: string) => void;
+  getTasks: () => void;
+  getEpic: (id: string | string[] | undefined) => void;
+  getEpics: () => void;
   createEpic: (name: string, description?: string) => void;
   createTask: (name: string, description?: string, deadline?: string) => void;
   deleteTask: (name: string) => void;

@@ -5,50 +5,52 @@ import * as S from "./styles";
 import { Button, message } from "antd";
 import { DeleteBin4, Edit } from "@styled-icons/remix-line";
 import { useActions } from "contexts/useActions/useActions";
+import EditModal from "components/EditModal";
+import { TasksI } from "contexts/useActions/types";
 
 interface TaskCardI {
-  initialStatus: boolean;
-  deadline?: string;
-  title: string;
-  description?: string;
+  task: TasksI;
 }
 
-const TaskCard: FC<TaskCardI> = ({
-  deadline,
-  title,
-  description,
-  initialStatus,
-}) => {
+const TaskCard: FC<TaskCardI> = ({ task }) => {
   const { deleteTask, toggleTask } = useActions();
-  const [checked, setChecked] = useState(initialStatus);
+  const [checked, setChecked] = useState(task?.status || false);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const onCheck = () => {
-    toggleTask(title, !checked);
+    toggleTask(task?.name, !checked);
     setChecked(!checked);
   };
 
   return (
     <S.Wrapper checked={checked}>
+      <EditModal
+        open={isEditModalOpen}
+        closeModal={() => setIsEditModalOpen(false)}
+        task={task}
+      />
+
       <S.FloatingContainer
         late={
-          !!deadline && !checked
-            ? formatStringToDate(String(deadline)) < new Date()
+          !!task?.dueDate && !checked
+            ? formatStringToDate(String(task?.dueDate)) < new Date()
             : false
         }
       >
-        {deadline !== undefined && (
+        {task?.dueDate !== undefined && (
           <p className="deadline">
-            até {formatStringToDeadline(String(deadline))}
+            até {formatStringToDeadline(String(task?.dueDate))}
           </p>
         )}
 
-        <button className="edit" onClick={() => {}}>
+        <button className="edit" onClick={() => setIsEditModalOpen(true)}>
           <Edit size={16} />
         </button>
         <button
           className="delete"
           onClick={() => {
-            deleteTask(title);
+            deleteTask(task?.name);
             message.success("Tarefa deletada com sucesso!");
           }}
         >
@@ -57,13 +59,13 @@ const TaskCard: FC<TaskCardI> = ({
       </S.FloatingContainer>
       <S.Group>
         <Checkbox
-          defaultChecked={initialStatus}
+          defaultChecked={task?.status}
           checked={checked}
           onChange={onCheck}
         />
-        <p>{title}</p>
+        <p>{task?.name}</p>
       </S.Group>
-      <p>{description}</p>
+      <p>{task?.description}</p>
     </S.Wrapper>
   );
 };

@@ -11,7 +11,7 @@ const Tasks = () => {
   const [loadingTasks, setLoadingTasks] = useState(false);
 
   useEffect(() => {
-    getTasks("1");
+    getTasks();
   }, []);
 
   return (
@@ -22,15 +22,7 @@ const Tasks = () => {
         {loadingTasks ? (
           <Spin />
         ) : (
-          user.tasks.map((task) => (
-            <TaskCard
-              key={task.name}
-              title={task.name}
-              initialStatus={task.status}
-              description={task.description}
-              deadline={task.dueDate}
-            />
-          ))
+          user.tasks.map((task) => <TaskCard key={task.name} task={task} />)
         )}
       </S.TasksGrid>
     </S.Wrapper>

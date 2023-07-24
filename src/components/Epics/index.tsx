@@ -3,12 +3,14 @@ import * as S from "./styles";
 import { useActions } from "contexts/useActions/useActions";
 import { useEffect } from "react";
 import { Spin } from "antd";
+import { useRouter } from "next/router";
 
 const Epics = () => {
   const { user, loadingEpics, getEpics } = useActions();
+  const router = useRouter();
 
   useEffect(() => {
-    getEpics("1");
+    getEpics();
   }, []);
 
   return (
@@ -23,10 +25,12 @@ const Epics = () => {
         <S.EpicsContainer>
           {user.epics?.map((epic) => (
             <EpicCard
+              key={epic.name}
               name={epic.name}
               description={epic.description}
               current={epic.current}
               total={epic.total}
+              onClick={() => router.push(`/epic/${epic.name}`)}
             />
           ))}
         </S.EpicsContainer>

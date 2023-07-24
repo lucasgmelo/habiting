@@ -1,7 +1,7 @@
 import Logo from "components/Logo";
 import * as S from "./styles";
-import { useState } from 'react'
-import { useRouter } from 'next/router'
+import { useState } from "react";
+import { useRouter } from "next/router";
 import { Button, Form, Input, message } from "antd";
 import Link from "next/dist/client/link";
 
@@ -9,19 +9,30 @@ import { GoogleLogo } from "./assets/google";
 
 import { useGoogleLogin } from "@react-oauth/google";
 import api from "api";
+import axios from "axios";
 
 const SignUp = () => {
-  const router = useRouter()
+  const router = useRouter();
   const responseGoogle = (response: unknown) => {
     console.log(response);
     // Manipule a resposta recebida do Google aqui (por exemplo, envie para o servidor Spring Boot).
   };
 
   const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => console.log(tokenResponse),
+    onSuccess: async (tokenResponse) => {
+      console.log(tokenResponse);
+      // fetching userinfo can be done on the client or the server
+      const userInfo = await axios
+        .get("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        })
+        .then((res) => res.data);
+
+      console.log(userInfo);
+    },
   });
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (values: {
     name: string;
@@ -29,26 +40,25 @@ const SignUp = () => {
     password: string;
   }) => {
     try {
-      setLoading(true)
+      setLoading(true);
 
-      const { name, email, password } = values
+      const { name, email, password } = values;
 
       const body = {
         username: name,
         email,
-        password
-      }
+        password,
+      };
 
-      const { data } = await api.post('/users', body)
+      const { data } = await api.post("/users", body);
 
-      const token = data.oAuthToken
-      localStorage.setItem('authToken', token)
-      router.push('/')
+      const token = data.oAuthToken;
+      localStorage.setItem("authToken", token);
+      router.push("/");
     } catch {
-      message.error('Erro ao fazer cadastro')
+      message.error("Erro ao fazer cadastro");
     } finally {
-      setLoading(false)
-
+      setLoading(false);
     }
   };
 
@@ -108,7 +118,13 @@ const SignUp = () => {
             >
               <Input.Password placeholder="Insira a seu senha" size="large" />
             </Form.Item>
-            <Button htmlType="submit" type="primary" size="large" block loading={loading}>
+            <Button
+              htmlType="submit"
+              type="primary"
+              size="large"
+              block
+              loading={loading}
+            >
               Cadastrar
             </Button>
           </Form>

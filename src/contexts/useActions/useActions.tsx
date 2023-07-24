@@ -8,6 +8,7 @@ import {
 import {
   ActionsContextData,
   ActionsProviderProps,
+  EpicsI,
   TasksI,
   UserI,
 } from "./types";
@@ -21,7 +22,7 @@ const defaultUser: UserI = {
   photo:
     "https://pbs.twimg.com/profile_images/1671136321299988483/WYECSKEe_400x400.jpg",
   tasks: [],
-  epics: [],
+  epics: [{ name: "123", description: "123", current: 0, total: 0 }],
 };
 
 export function ActionsProvider({
@@ -43,6 +44,9 @@ export function ActionsProvider({
   const [loadingCreatingTask, setLoadingCreatingTask] = useState(false);
   const [loadingEpics, setLoadingEpics] = useState(false);
   const [loadingCreatingEpic, setLoadingCreatingEpic] = useState(false);
+
+  const [loadingEpic, setLoadingEpic] = useState(false);
+  const [epic, setEpic] = useState<EpicsI>();
 
   const today = new Date();
 
@@ -79,7 +83,6 @@ export function ActionsProvider({
         status: false,
         dueDate: deadline,
         epic: null,
-        userId: "1",
       };
 
       const { data } = await api.post("/tasks", newTask);
@@ -132,7 +135,7 @@ export function ActionsProvider({
     setUser(newUserData);
   };
 
-  const getEpics = async (userId: string) => {
+  const getEpics = async () => {
     try {
       setLoadingEpics(true);
 
@@ -168,6 +171,21 @@ export function ActionsProvider({
     }
   };
 
+  const getEpic = async (id: string | string[] | undefined) => {
+    try {
+      setLoadingEpic(true);
+
+      const { data } = await api.get(`/epics/${id}`);
+
+      console.log(data);
+      setEpic(data);
+    } catch {
+      message.error("Erro ao ler épico");
+    } finally {
+      setLoadingEpic(false);
+    }
+  };
+
   // const createEpic = async (userId: string) => {
   //   try {
   //     setLoadingEpics(true);
@@ -186,11 +204,14 @@ export function ActionsProvider({
     <ActionsContext.Provider
       value={{
         user,
+        epic,
         details,
         loadingEpics,
+        loadingEpic,
         loadingTasks,
         loadingCreatingTask,
         loadingCreatingEpic,
+        getEpic,
         getEpics,
         getTasks,
         createTask,

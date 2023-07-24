@@ -1,9 +1,18 @@
-import { FC, Fragment, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import * as S from "./styles";
-import { Button, Checkbox, DatePicker, Form, Input, message } from "antd";
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Form,
+  Input,
+  Select,
+  message,
+} from "antd";
 import { useActions } from "contexts/useActions/useActions";
 import { dateFromIsoToApi, formatStringToDeadline } from "utils/formatters";
 import { ArrowRight } from "@styled-icons/remix-line";
+import { TasksI } from "contexts/useActions/types";
 
 interface CreateModalI {
   open: boolean;
@@ -16,12 +25,46 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   const {
     createTask,
     createEpic,
+    getTasks,
+    getEpics,
     loadingCreatingTask,
     loadingCreatingEpic,
     user,
   } = useActions();
   const [createAnother, setCreateAnother] = useState(false);
   const dateFormat = "DD/MM/YYYY";
+
+  const [currentEpic, setCurrentEpic] = useState("");
+  const [tasksInEpic, setTasksInEpic] = useState(
+    user.tasks.filter((task) => task.epic === currentEpic)
+  );
+  const [tasksAvailable, setTasksAvailable] = useState<TasksI[]>(
+    user.tasks.filter((task) => !tasksInEpic.includes(task))
+  );
+
+  const addNewTaskInEpic = (newTask: TasksI) => {
+    setTasksInEpic([...tasksInEpic, newTask]);
+    setTasksAvailable(tasksAvailable.filter((task) => task.id !== newTask.id));
+  };
+
+  const removeNewTaskInEpic = (deleteTask: TasksI) => {
+    const newTasks = tasksInEpic.filter((task) => task.id === deleteTask.id);
+
+    setTasksInEpic(newTasks);
+    setTasksAvailable(user.tasks.filter((task) => !newTasks.includes(task)));
+  };
+
+  useEffect(() => {
+    if (open) {
+      getTasks();
+      getEpics();
+      console.log(user);
+    }
+    if (!open) {
+      setTasksInEpic([]);
+      setTasksAvailable(user.tasks);
+    }
+  }, [open]);
 
   const onSubmitTask = (values: {
     taskname: string;
@@ -32,7 +75,8 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
     createTask(
       values.taskname,
       values.description,
-      dateFromIsoToApi(values.deadline["$d"].toISOString())
+
+      values.deadline && dateFromIsoToApi(values.deadline["$d"].toISOString())
     );
     form.resetFields();
     if (!createAnother) {
@@ -48,7 +92,7 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
     another: boolean;
   }) => {
     createEpic(values.taskname, values.description);
-    console.log(values);
+    console.log(values, tasksInEpic);
 
     form.resetFields();
     if (!createAnother) {
@@ -56,6 +100,13 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
       message.success("Épico criado com sucesso!");
     }
   };
+
+  const selectOptions = user.epics.map((epic) => {
+    return {
+      value: epic.name,
+      label: epic.name,
+    };
+  });
 
   const renderContent = () => {
     if (createMode === "task")
@@ -98,6 +149,10 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
 
             <Form.Item label="Prazo final" name="deadline">
               <DatePicker placeholder="Selecionar data" />
+            </Form.Item>
+
+            <Form.Item name="epic" label="Épico">
+              <Select options={selectOptions} />
             </Form.Item>
 
             <div className="footer">
@@ -160,7 +215,10 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 },
               ]}
             >
-              <Input placeholder="Nome do épico" />
+              <Input
+                placeholder="Nome do épico"
+                onChange={(event) => setCurrentEpic(event.target.value)}
+              />
             </Form.Item>
 
             <Form.Item label="Descrição" name="description">
@@ -181,38 +239,41 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
               <div>
                 <p>Adicionadas</p>
                 <S.TaskContainer>
-                  <S.Task>
-                    <div>
-                      <p>teste</p>
-                      <p>123</p>
-                    </div>
-                    <S.ArrowButton included type="button">
-                      <ArrowRight size={16} />
-                    </S.ArrowButton>
-                  </S.Task>
-                  <S.Task>
-                    <div>
-                      <p>teste</p>
-                      <p>123</p>
-                    </div>
-                    <S.ArrowButton included type="button">
-                      <ArrowRight size={16} />
-                    </S.ArrowButton>
-                  </S.Task>
+                  {tasksInEpic.map((task) => (
+                    <S.Task>
+                      <div>
+                        <p>{task.name}</p>
+                        <p>{task.description}</p>
+                      </div>
+                      <S.ArrowButton
+                        included
+                        type="button"
+                        onClick={() => removeNewTaskInEpic(task)}
+                      >
+                        <ArrowRight size={16} />
+                      </S.ArrowButton>
+                    </S.Task>
+                  ))}
                 </S.TaskContainer>
               </div>
               <div>
                 <p>Disponíveis</p>
                 <S.TaskContainer>
-                  <S.Task>
-                    <div>
-                      <p>teste</p>
-                      <p>123</p>
-                    </div>
-                    <S.ArrowButton included={false} type="button">
-                      <ArrowRight size={16} />
-                    </S.ArrowButton>
-                  </S.Task>
+                  {tasksAvailable.map((task) => (
+                    <S.Task>
+                      <div>
+                        <p>{task.name}</p>
+                        <p>{task.description}</p>
+                      </div>
+                      <S.ArrowButton
+                        included={false}
+                        type="button"
+                        onClick={() => addNewTaskInEpic(task)}
+                      >
+                        <ArrowRight size={16} />
+                      </S.ArrowButton>
+                    </S.Task>
+                  ))}
                 </S.TaskContainer>
               </div>
             </S.Columns>

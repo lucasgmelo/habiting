@@ -12,16 +12,16 @@ interface CardChartI {
 }
 
 const CardChart: FC<CardChartI> = ({ current, total }) => {
-  const progressPercent = current / total;
+  const progressPercent = current / total || 0;
 
   const data = [
     {
       type: "Realizado",
-      value: current,
+      value: current || 0,
     },
     {
       type: "A realizar",
-      value: total - current,
+      value: total - current || 1,
     },
   ];
 
@@ -46,7 +46,7 @@ const CardChart: FC<CardChartI> = ({ current, total }) => {
           fontSize: 18,
           fontWeight: 400,
         },
-        content: `${Number((current / total) * 100).toFixed()}%`,
+        content: `${Number(progressPercent * 100).toFixed()}%`,
       },
     },
   };

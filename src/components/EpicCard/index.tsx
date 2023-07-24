@@ -3,8 +3,18 @@ import * as S from "./styles";
 import { Progress } from "antd";
 import { EpicsI } from "contexts/useActions/types";
 
-const EpicCard: FC<EpicsI> = ({ name, description, current, total }) => (
-  <S.Wrapper>
+interface EpicCardI extends EpicsI {
+  onClick: () => void;
+}
+
+const EpicCard: FC<EpicCardI> = ({
+  name,
+  description,
+  current,
+  total,
+  onClick,
+}) => (
+  <S.Wrapper onClick={onClick}>
     <h4>{name}</h4>
     <p>{description}</p>
     <span>
