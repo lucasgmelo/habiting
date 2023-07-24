@@ -195,9 +195,10 @@ export function ActionsProvider({
         ...task,
         inProgress: task.status,
         epicId: task.epic,
+        userId: localStorage.getItem("token"),
       };
 
-      const { data } = await api.put(`/task/${task.id}`, newTask);
+      const { data } = await api.put(`/tasks/${task.id}`, newTask);
 
       console.log(data);
     } catch {
