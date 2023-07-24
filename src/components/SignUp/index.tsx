@@ -1,14 +1,17 @@
 import Logo from "components/Logo";
 import * as S from "./styles";
-
-import { Button, Form, Input } from "antd";
+import { useState } from 'react'
+import { useRouter } from 'next/router'
+import { Button, Form, Input, message } from "antd";
 import Link from "next/dist/client/link";
 
 import { GoogleLogo } from "./assets/google";
 
 import { useGoogleLogin } from "@react-oauth/google";
+import api from "api";
 
 const SignUp = () => {
+  const router = useRouter()
   const responseGoogle = (response: unknown) => {
     console.log(response);
     // Manipule a resposta recebida do Google aqui (por exemplo, envie para o servidor Spring Boot).
@@ -18,15 +21,36 @@ const SignUp = () => {
     onSuccess: (tokenResponse) => console.log(tokenResponse),
   });
 
-  const onSubmit = (values: {
+  const [loading, setLoading] = useState(false)
+
+  const onSubmit = async (values: {
     name: string;
     email: string;
     password: string;
   }) => {
-    console.log(values);
-  };
+    try {
+      setLoading(true)
 
-  console.log(process.env);
+      const { name, email, password } = values
+
+      const body = {
+        username: name,
+        email,
+        password
+      }
+
+      const { data } = await api.post('/users', body)
+
+      const token = data.oAuthToken
+      localStorage.setItem('authToken', token)
+      router.push('/')
+    } catch {
+      message.error('Erro ao fazer cadastro')
+    } finally {
+      setLoading(false)
+
+    }
+  };
 
   return (
     <S.Wrapper>
@@ -82,9 +106,9 @@ const SignUp = () => {
                 },
               ]}
             >
-              <Input placeholder="Insira a seu senha" size="large" />
+              <Input.Password placeholder="Insira a seu senha" size="large" />
             </Form.Item>
-            <Button htmlType="submit" type="primary" size="large" block>
+            <Button htmlType="submit" type="primary" size="large" block loading={loading}>
               Cadastrar
             </Button>
           </Form>

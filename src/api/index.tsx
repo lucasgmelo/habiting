@@ -7,33 +7,17 @@ const api = axios.create({
 });
 
 export const logout = () => {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("user");
+  localStorage.removeItem("token");
 };
 
-// api.interceptors.request.use((request) => {
-//   const token = localStorage.getItem('idToken');
-//   const workspace = localStorage.getItem('workspace');
+api.interceptors.request.use((request) => {
+  const token = localStorage.getItem('token');
 
-//   if (request.headers) {
-//     request.headers.Authorization = token ? `Bearer ${token}` : '';
-//     request.headers.workspace = workspace || '';
-//   }
+  if (request.headers) {
+    request.headers.token = token ? token : '';
+  }
 
-//   return request;
-// });
-
-// api.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     if (error.response.status === 401) {
-//       renderMessageError();
-//     }
-//     if (error.response.status === 403) {
-//       return logout();
-//     }
-//     throw error;
-//   },
-// );
+  return request;
+});
 
 export default api;

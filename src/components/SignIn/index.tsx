@@ -1,18 +1,42 @@
 import Logo from "components/Logo";
 import * as S from "./styles";
 
-import { Button, Form, Input } from "antd";
+import { useState } from 'react';
+import api from 'api'
+import { useRouter } from 'next/router'
+
+import { Button, Form, Input, message } from "antd";
 import Link from "next/dist/client/link";
 
 import { GoogleLogo } from "./assets/google";
 
 const SignIn = () => {
-  const onSubmit = (values: {
-    name: string;
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  const onSubmit = async (values: {
     email: string;
     password: string;
   }) => {
-    console.log(values);
+    try {
+      setLoading(true)
+
+      const { email, password } = values
+
+      const body = {
+        email,
+        password
+      }
+
+      const { data } = await api.post('/users/signin', body)
+
+      localStorage.setItem('token', data.oauthToken)
+      router.push('/')
+    } catch {
+      message.error('Erro ao fazer login')
+    } finally {
+      setLoading(false)
+    }
   };
 
   return (
@@ -56,9 +80,9 @@ const SignIn = () => {
                 },
               ]}
             >
-              <Input placeholder="Insira a seu senha" size="large" />
+              <Input.Password placeholder="Insira a seu senha" size="large" />
             </Form.Item>
-            <Button htmlType="submit" type="primary" size="large" block>
+            <Button htmlType="submit" type="primary" size="large" block loading={loading}>
               Entrar
             </Button>
           </Form>
