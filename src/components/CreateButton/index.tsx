@@ -12,7 +12,12 @@ const CreateButton: FC = () => {
     "task" | "habit" | "goal" | "epic"
   >("task");
 
-  if (router.pathname === "/perfil") return null;
+  if (
+    router.pathname === "/perfil" ||
+    router.pathname === "/cadastro" ||
+    router.pathname === "/login"
+  )
+    return null;
 
   const items: MenuProps["items"] = [
     {

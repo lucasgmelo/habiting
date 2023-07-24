@@ -53,16 +53,16 @@ const CardChart: FC<CardChartI> = ({ current, total }) => {
 
   const content = {
     done: {
-      title: "Parabéns! Você finalizou por hoje",
+      title: "Parabéns! Você finalizou suas tarefas da semana",
       text: "Todas as tarefas foram feitas",
     },
     well: {
       title: "Você está indo bem!",
-      text: `Complete ${total - current} tarefas para cumprir a meta diária`,
+      text: `Complete ${total - current} tarefas para cumprir a meta semanal`,
     },
     start: {
-      title: "Hoje pode ser um dia incrível!",
-      text: `Complete ${total - current} tarefas para cumprir a meta diária`,
+      title: "A semana pode ser incrível!",
+      text: `Complete ${total - current} tarefas para cumprir a meta semanal`,
     },
   };
 

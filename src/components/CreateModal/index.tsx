@@ -2,7 +2,7 @@ import { FC, Fragment, useState } from "react";
 import * as S from "./styles";
 import { Button, Checkbox, DatePicker, Form, Input, message } from "antd";
 import { useActions } from "contexts/useActions/useActions";
-import { formatStringToDeadline } from "utils/formatters";
+import { dateFromIsoToApi, formatStringToDeadline } from "utils/formatters";
 import { ArrowRight } from "@styled-icons/remix-line";
 
 interface CreateModalI {
@@ -13,17 +13,27 @@ interface CreateModalI {
 
 const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   const [form] = Form.useForm();
-  const { createTask, user } = useActions();
+  const {
+    createTask,
+    createEpic,
+    loadingCreatingTask,
+    loadingCreatingEpic,
+    user,
+  } = useActions();
   const [createAnother, setCreateAnother] = useState(false);
   const dateFormat = "DD/MM/YYYY";
 
   const onSubmitTask = (values: {
     taskname: string;
     description: string;
-    deadline: string;
+    deadline: { ["$d"]: Date };
     another: boolean;
   }) => {
-    createTask(values.taskname, values.description, values.deadline);
+    createTask(
+      values.taskname,
+      values.description,
+      dateFromIsoToApi(values.deadline["$d"].toISOString())
+    );
     form.resetFields();
     if (!createAnother) {
       closeModal();
@@ -87,7 +97,7 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
             </Form.Item>
 
             <Form.Item label="Prazo final" name="deadline">
-              <DatePicker placeholder="Selecionar data" format={dateFormat} />
+              <DatePicker placeholder="Selecionar data" />
             </Form.Item>
 
             <div className="footer">
@@ -106,7 +116,11 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 >
                   Cancelar
                 </Button>
-                <Button htmlType="submit" type="primary">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  loading={loadingCreatingTask}
+                >
                   Criar
                 </Button>
               </div>
@@ -219,7 +233,11 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 >
                   Cancelar
                 </Button>
-                <Button htmlType="submit" type="primary">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  loading={loadingCreatingEpic}
+                >
                   Criar
                 </Button>
               </div>

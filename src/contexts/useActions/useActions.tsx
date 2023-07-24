@@ -11,6 +11,8 @@ import {
   TasksI,
   UserI,
 } from "./types";
+import api from "api";
+import { message } from "antd";
 
 export const ActionsContext = createContext({} as ActionsContextData);
 
@@ -19,6 +21,7 @@ const defaultUser: UserI = {
   photo:
     "https://pbs.twimg.com/profile_images/1671136321299988483/WYECSKEe_400x400.jpg",
   tasks: [],
+  epics: [],
 };
 
 export function ActionsProvider({
@@ -36,6 +39,11 @@ export function ActionsProvider({
     return defaultUser;
   });
 
+  const [loadingTasks, setLoadingTasks] = useState(false);
+  const [loadingCreatingTask, setLoadingCreatingTask] = useState(false);
+  const [loadingEpics, setLoadingEpics] = useState(false);
+  const [loadingCreatingEpic, setLoadingCreatingEpic] = useState(false);
+
   const today = new Date();
 
   const details = {
@@ -44,26 +52,51 @@ export function ActionsProvider({
     todayKey: getTrackerKey(today),
   };
 
-  const createTask = (
+  const getTasks = async () => {
+    try {
+      setLoadingTasks(true);
+
+      const { data } = await api.get("/tasks");
+
+      setUser({ ...user, tasks: data });
+    } catch {
+      message.error("Erro ao localizar tasks");
+    } finally {
+      setLoadingTasks(false);
+    }
+  };
+
+  const createTask = async (
     name: string,
     description?: string,
     deadline?: string
   ) => {
-    const newTask: TasksI = {
-      id: "test",
-      name,
-      description,
-      status: false,
-      dueDate: deadline,
-      epic: null,
-    };
+    try {
+      setLoadingCreatingTask(true);
+      const newTask: Omit<TasksI, "id"> = {
+        name,
+        description,
+        status: false,
+        dueDate: deadline,
+        epic: null,
+        userId: "1",
+      };
 
-    const newUserData = {
-      ...user,
-      tasks: [...user.tasks, newTask],
-    };
+      const { data } = await api.post("/tasks", newTask);
 
-    setUser(newUserData);
+      const newUserData = {
+        ...user,
+        tasks: [...user.tasks, data],
+      };
+
+      setUser(newUserData);
+    } catch {
+      message.error(
+        "Não foi possível criar a tarefa, tente novamente mais tarde"
+      );
+    } finally {
+      setLoadingCreatingTask(false);
+    }
   };
 
   const deleteTask = (name: string) => {
@@ -99,12 +132,69 @@ export function ActionsProvider({
     setUser(newUserData);
   };
 
+  const getEpics = async (userId: string) => {
+    try {
+      setLoadingEpics(true);
+
+      const { data } = await api.get("/epics");
+
+      setUser({ ...user, epics: data });
+    } catch {
+      message.error("Erro ao carregar épicos");
+    } finally {
+      setLoadingEpics(false);
+    }
+  };
+
+  const createEpic = async (name: string, description?: string) => {
+    try {
+      setLoadingCreatingEpic(true);
+
+      const body = {
+        name,
+        description,
+        tasksDone: 0,
+        totalTasts: 0,
+      };
+
+      const { data } = await api.post("/epics", body);
+
+      console.log(data);
+      setUser({ ...user, epics: [...user.epics, data] });
+    } catch {
+      message.error("Erro ao criar épico");
+    } finally {
+      setLoadingCreatingEpic(false);
+    }
+  };
+
+  // const createEpic = async (userId: string) => {
+  //   try {
+  //     setLoadingEpics(true);
+
+  //     const { data } = await api.get("/epics");
+
+  //     console.log(data);
+  //   } catch {
+  //     message.error("Erro ao carregar épicos");
+  //   } finally {
+  //     setLoadingEpics(false);
+  //   }
+  // };
+
   return (
     <ActionsContext.Provider
       value={{
         user,
         details,
+        loadingEpics,
+        loadingTasks,
+        loadingCreatingTask,
+        loadingCreatingEpic,
+        getEpics,
+        getTasks,
         createTask,
+        createEpic,
         deleteTask,
         toggleTask,
       }}

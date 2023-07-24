@@ -7,12 +7,21 @@ export interface TasksI {
   status: boolean;
   dueDate?: string;
   epic: null | string;
+  userId: string;
+}
+
+export interface EpicsI {
+  name: string;
+  description?: string;
+  current: number;
+  total: number;
 }
 
 export interface UserI {
   name: string;
   photo: string;
   tasks: TasksI[];
+  epics: EpicsI[];
 }
 
 export interface ActionsContextData {
@@ -22,6 +31,13 @@ export interface ActionsContextData {
     todayKey: string;
   };
   user: UserI;
+  loadingTasks: boolean;
+  loadingEpics: boolean;
+  loadingCreatingTask: boolean;
+  loadingCreatingEpic: boolean;
+  getTasks: (userId: string) => void;
+  getEpics: (userId: string) => void;
+  createEpic: (name: string, description?: string) => void;
   createTask: (name: string, description?: string, deadline?: string) => void;
   deleteTask: (name: string) => void;
   toggleTask: (name: string, newStatus: boolean) => void;
