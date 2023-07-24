@@ -13,7 +13,13 @@ interface CreateModalI {
 
 const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   const [form] = Form.useForm();
-  const { createTask, user } = useActions();
+  const {
+    createTask,
+    createEpic,
+    loadingCreatingTask,
+    loadingCreatingEpic,
+    user,
+  } = useActions();
   const [createAnother, setCreateAnother] = useState(false);
   const dateFormat = "DD/MM/YYYY";
 
@@ -110,7 +116,11 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 >
                   Cancelar
                 </Button>
-                <Button htmlType="submit" type="primary">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  loading={loadingCreatingTask}
+                >
                   Criar
                 </Button>
               </div>
@@ -223,7 +233,11 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 >
                   Cancelar
                 </Button>
-                <Button htmlType="submit" type="primary">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  loading={loadingCreatingEpic}
+                >
                   Criar
                 </Button>
               </div>

@@ -42,6 +42,7 @@ export function ActionsProvider({
   const [loadingTasks, setLoadingTasks] = useState(false);
   const [loadingCreatingTask, setLoadingCreatingTask] = useState(false);
   const [loadingEpics, setLoadingEpics] = useState(false);
+  const [loadingCreatingEpic, setLoadingCreatingEpic] = useState(false);
 
   const today = new Date();
 
@@ -145,6 +146,28 @@ export function ActionsProvider({
     }
   };
 
+  const createEpic = async (name: string, description?: string) => {
+    try {
+      setLoadingCreatingEpic(true);
+
+      const body = {
+        name,
+        description,
+        tasksDone: 0,
+        totalTasts: 0,
+      };
+
+      const { data } = await api.post("/epics", body);
+
+      console.log(data);
+      setUser({ ...user, epics: [...user.epics, data] });
+    } catch {
+      message.error("Erro ao criar épico");
+    } finally {
+      setLoadingCreatingEpic(false);
+    }
+  };
+
   // const createEpic = async (userId: string) => {
   //   try {
   //     setLoadingEpics(true);
@@ -167,9 +190,11 @@ export function ActionsProvider({
         loadingEpics,
         loadingTasks,
         loadingCreatingTask,
+        loadingCreatingEpic,
         getEpics,
         getTasks,
         createTask,
+        createEpic,
         deleteTask,
         toggleTask,
       }}

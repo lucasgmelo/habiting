@@ -6,7 +6,18 @@ import Link from "next/dist/client/link";
 
 import { GoogleLogo } from "./assets/google";
 
+import { useGoogleLogin } from "@react-oauth/google";
+
 const SignUp = () => {
+  const responseGoogle = (response: unknown) => {
+    console.log(response);
+    // Manipule a resposta recebida do Google aqui (por exemplo, envie para o servidor Spring Boot).
+  };
+
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => console.log(tokenResponse),
+  });
+
   const onSubmit = (values: {
     name: string;
     email: string;
@@ -14,6 +25,8 @@ const SignUp = () => {
   }) => {
     console.log(values);
   };
+
+  console.log(process.env);
 
   return (
     <S.Wrapper>
@@ -23,9 +36,9 @@ const SignUp = () => {
         <p>Crie uma conta para continuar</p>
         <S.Container>
           <S.Buttons>
-            <Button block size="large">
+            <Button block size="large" onClick={login}>
               <GoogleLogo />
-              Cadastrar com o Google
+              Cadastrar com o Googlee
             </Button>
           </S.Buttons>
           <S.Divider>

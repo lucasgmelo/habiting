@@ -34,8 +34,10 @@ export interface ActionsContextData {
   loadingTasks: boolean;
   loadingEpics: boolean;
   loadingCreatingTask: boolean;
+  loadingCreatingEpic: boolean;
   getTasks: (userId: string) => void;
   getEpics: (userId: string) => void;
+  createEpic: (name: string, description?: string) => void;
   createTask: (name: string, description?: string, deadline?: string) => void;
   deleteTask: (name: string) => void;
   toggleTask: (name: string, newStatus: boolean) => void;
