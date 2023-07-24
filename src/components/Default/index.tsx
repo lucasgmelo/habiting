@@ -89,7 +89,7 @@ const Default = () => {
   const username = () => {
     if (typeof window === "undefined") return "";
 
-    return JSON.parse(localStorage.getItem("user") || "{}").name;
+    return JSON.parse(localStorage.getItem("user") || "{}").username;
   };
 
   return (
