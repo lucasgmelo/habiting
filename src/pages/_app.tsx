@@ -10,8 +10,23 @@ import GlobalStyles from "styles/global";
 import theme from "styles/theme";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { isAuthenticated } from "utils/auth";
 
 function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
+  const isUserInAuthRoute =
+    router.pathname.includes("cadastro") || router.pathname.includes("login");
+
+  useEffect(() => {
+    console.log(!isAuthenticated() && !isUserInAuthRoute);
+    if (!isAuthenticated() && !isUserInAuthRoute) {
+      router.push("/login");
+    }
+  }, [router.pathname]);
+
   return (
     <ThemeProvider theme={theme}>
       <ConfigProvider theme={antdTheme}>
