@@ -20,7 +20,7 @@ const TaskCard: FC<TaskCardI> = ({ task }) => {
 
   const onCheck = () => {
     toggleTask(task?.name, !checked);
-    updateTask(task);
+    updateTask({ ...task, status: !task.status });
     setChecked(!checked);
   };
 

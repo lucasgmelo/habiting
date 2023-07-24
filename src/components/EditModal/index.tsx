@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import { DatePicker, Form, Input, Select } from "antd";
+import { Button, DatePicker, Form, Input, Select } from "antd";
 
 import { TasksI } from "contexts/useActions/types";
 import { useActions } from "contexts/useActions/useActions";
@@ -14,11 +14,21 @@ interface EditModalI {
 
 const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
   const [form] = Form.useForm();
-  const { user, getEpics } = useActions();
+  const { user, getEpics, updateTask } = useActions();
 
-  const onFinish = (values: unknown) => {
-    console.log(values);
-    console.log("oii");
+  const onFinish = (values: {
+    name: string;
+    description: string;
+    dueDate: string;
+    epic: string;
+  }) => {
+    updateTask({
+      id: task.id,
+      name: values.name,
+      description: values.description,
+      status: task.status,
+      epic: values.epic,
+    });
   };
 
   useEffect(() => {
@@ -32,7 +42,16 @@ const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
   }, [open]);
 
   return (
-    <S.Wrapper open={open} onCancel={closeModal} title="Editar tarefa">
+    <S.Wrapper
+      open={open}
+      onCancel={closeModal}
+      title="Editar tarefa"
+      footer={[
+        <Button type="primary" htmlType="submit" onClick={() => form.submit()}>
+          OK
+        </Button>,
+      ]}
+    >
       <Form form={form} onFinish={onFinish}>
         <Form.Item
           name="name"

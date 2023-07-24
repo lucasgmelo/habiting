@@ -193,7 +193,8 @@ export function ActionsProvider({
 
       const newTask = {
         ...task,
-        status: !task.status,
+        inProgress: task.status,
+        epicId: task.epic,
       };
 
       const { data } = await api.put(`/task/${task.id}`, newTask);
