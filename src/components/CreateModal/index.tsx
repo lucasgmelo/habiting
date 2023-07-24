@@ -58,7 +58,6 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
     if (open) {
       getTasks();
       getEpics();
-      console.log(user);
     }
     if (!open) {
       setTasksInEpic([]);

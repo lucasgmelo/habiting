@@ -28,6 +28,7 @@ const SignIn = () => {
       const { data } = await api.post("/users/signin", body);
 
       localStorage.setItem("token", data.oauthToken);
+      localStorage.setItem("user", data);
       router.push("/");
     } catch {
       message.error("Erro ao fazer login");

@@ -43,6 +43,7 @@ export function ActionsProvider({
   const [loadingCreatingTask, setLoadingCreatingTask] = useState(false);
   const [loadingEpics, setLoadingEpics] = useState(false);
   const [loadingCreatingEpic, setLoadingCreatingEpic] = useState(false);
+  const [loadingUpdateTask, setLoadingUpdateTask] = useState(false);
 
   const [loadingEpic, setLoadingEpic] = useState(false);
   const [epic, setEpic] = useState<EpicsI>();
@@ -186,6 +187,25 @@ export function ActionsProvider({
     }
   };
 
+  const updateTask = async (task: TasksI) => {
+    try {
+      setLoadingCreatingTask(true);
+
+      const newTask = {
+        ...task,
+        status: !task.status,
+      };
+
+      const { data } = await api.put(`/task/${task.id}`, newTask);
+
+      console.log(data);
+    } catch {
+      console.error("erro");
+    } finally {
+      setLoadingCreatingTask(false);
+    }
+  };
+
   // const createEpic = async (userId: string) => {
   //   try {
   //     setLoadingEpics(true);
@@ -207,6 +227,7 @@ export function ActionsProvider({
         epic,
         details,
         loadingEpics,
+        loadingUpdateTask,
         loadingEpic,
         loadingTasks,
         loadingCreatingTask,
@@ -218,6 +239,7 @@ export function ActionsProvider({
         createEpic,
         deleteTask,
         toggleTask,
+        updateTask,
       }}
     >
       {children}

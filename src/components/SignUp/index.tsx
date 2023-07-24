@@ -13,10 +13,6 @@ import axios from "axios";
 
 const SignUp = () => {
   const router = useRouter();
-  const responseGoogle = (response: unknown) => {
-    console.log(response);
-    // Manipule a resposta recebida do Google aqui (por exemplo, envie para o servidor Spring Boot).
-  };
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -56,6 +52,7 @@ const SignUp = () => {
 
       const token = data.oAuthToken;
       localStorage.setItem("authToken", token);
+      localStorage.setItem("user", data);
       router.push("/");
     } catch {
       message.error("Erro ao fazer cadastro");

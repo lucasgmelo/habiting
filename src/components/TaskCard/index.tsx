@@ -13,13 +13,14 @@ interface TaskCardI {
 }
 
 const TaskCard: FC<TaskCardI> = ({ task }) => {
-  const { deleteTask, toggleTask } = useActions();
+  const { deleteTask, toggleTask, updateTask } = useActions();
   const [checked, setChecked] = useState(task?.status || false);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const onCheck = () => {
     toggleTask(task?.name, !checked);
+    updateTask(task);
     setChecked(!checked);
   };
 
