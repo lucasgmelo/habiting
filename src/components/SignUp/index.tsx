@@ -20,15 +20,17 @@ const SignUp = () => {
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      console.log(tokenResponse);
-      // fetching userinfo can be done on the client or the server
+      localStorage.setItem("token", tokenResponse.access_token);
+
       const userInfo = await axios
         .get("https://www.googleapis.com/oauth2/v3/userinfo", {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         })
         .then((res) => res.data);
 
-      console.log(userInfo);
+      localStorage.setItem("user", JSON.stringify(userInfo));
+
+      router.push("/");
     },
   });
 

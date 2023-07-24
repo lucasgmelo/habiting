@@ -1,9 +1,9 @@
 import Logo from "components/Logo";
 import * as S from "./styles";
 
-import { useState } from 'react';
-import api from 'api'
-import { useRouter } from 'next/router'
+import { useState } from "react";
+import api from "api";
+import { useRouter } from "next/router";
 
 import { Button, Form, Input, message } from "antd";
 import Link from "next/dist/client/link";
@@ -11,31 +11,28 @@ import Link from "next/dist/client/link";
 import { GoogleLogo } from "./assets/google";
 
 const SignIn = () => {
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const onSubmit = async (values: {
-    email: string;
-    password: string;
-  }) => {
+  const onSubmit = async (values: { email: string; password: string }) => {
     try {
-      setLoading(true)
+      setLoading(true);
 
-      const { email, password } = values
+      const { email, password } = values;
 
       const body = {
         email,
-        password
-      }
+        password,
+      };
 
-      const { data } = await api.post('/users/signin', body)
+      const { data } = await api.post("/users/signin", body);
 
-      localStorage.setItem('token', data.oauthToken)
-      router.push('/')
+      localStorage.setItem("token", data.oauthToken);
+      router.push("/");
     } catch {
-      message.error('Erro ao fazer login')
+      message.error("Erro ao fazer login");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -82,7 +79,13 @@ const SignIn = () => {
             >
               <Input.Password placeholder="Insira a seu senha" size="large" />
             </Form.Item>
-            <Button htmlType="submit" type="primary" size="large" block loading={loading}>
+            <Button
+              htmlType="submit"
+              type="primary"
+              size="large"
+              block
+              loading={loading}
+            >
               Entrar
             </Button>
           </Form>

@@ -18,9 +18,8 @@ import { message } from "antd";
 export const ActionsContext = createContext({} as ActionsContextData);
 
 const defaultUser: UserI = {
-  name: "Lucas Melo",
-  photo:
-    "https://pbs.twimg.com/profile_images/1671136321299988483/WYECSKEe_400x400.jpg",
+  name: "",
+  photo: "",
   tasks: [],
   epics: [{ name: "123", description: "123", current: 0, total: 0 }],
 };
@@ -77,7 +76,8 @@ export function ActionsProvider({
   ) => {
     try {
       setLoadingCreatingTask(true);
-      const newTask: Omit<TasksI, "id"> = {
+      const newTask: TasksI = {
+        id: null,
         name,
         description,
         status: false,

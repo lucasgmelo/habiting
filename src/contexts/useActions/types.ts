@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 export interface TasksI {
-  id: string;
+  id: string | null;
   name: string;
   description?: string;
   status: boolean;

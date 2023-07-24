@@ -86,6 +86,12 @@ const Default = () => {
   //   setIsProgressModalOpen(true);
   // };
 
+  const username = () => {
+    if (typeof window === "undefined") return "";
+
+    return JSON.parse(localStorage.getItem("user") || "{}").name;
+  };
+
   return (
     <S.Wrapper>
       {/* <ProgressModal
@@ -96,7 +102,7 @@ const Default = () => {
       /> */}
 
       <S.Title>
-        Olá, <span>{user.name}</span>. {details.salutation}
+        Olá, <span>{username()}</span>. {details.salutation}
       </S.Title>
       <S.Subtitle>{details.day}</S.Subtitle>
       <S.WidgetGrid>
