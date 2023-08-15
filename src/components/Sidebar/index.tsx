@@ -16,7 +16,7 @@ const Sidebar = () => {
   const router = useRouter();
 
   const routes = {
-    home: "/",
+    home: "/home",
     // dashboard: "/dashboard",
     // goals: "/metas",
     // habits: "/habitos",

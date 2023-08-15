@@ -81,7 +81,8 @@ export function ActionsProvider({
   const createTask = async (
     name: string,
     description?: string,
-    deadline?: string
+    deadline?: string,
+    epicId?: string
   ) => {
     try {
       setLoadingCreatingTask(true);
@@ -91,7 +92,7 @@ export function ActionsProvider({
         description,
         inProgress: false,
         dueDate: deadline,
-        epic: null,
+        epicId: epicId || null,
       };
 
       const { data } = await api.post("/tasks", newTask);
@@ -162,15 +163,20 @@ export function ActionsProvider({
     }
   };
 
-  const createEpic = async (name: string, description?: string) => {
+  const createEpic = async (
+    name: string,
+    description: string,
+    tasksDone: number,
+    totalTasks: number
+  ) => {
     try {
       setLoadingCreatingEpic(true);
 
       const body = {
         name,
         description,
-        tasksDone: 0,
-        totalTasts: 0,
+        tasksDone,
+        totalTasks,
       };
 
       const { data } = await api.post("/epics", body);
@@ -206,7 +212,7 @@ export function ActionsProvider({
       const newTask = {
         ...task,
         inProgress: task.inProgress,
-        epicId: task.epic,
+        epicId: task.epicId,
       };
 
       await api.put(`/tasks/${task.id}`, newTask);

@@ -29,7 +29,7 @@ const SignIn = () => {
 
       localStorage.setItem("token", data.oauthToken);
       localStorage.setItem("user", JSON.stringify(data));
-      router.push("/default");
+      router.push("/home");
     } catch {
       message.error("Erro ao fazer login");
     } finally {

@@ -5,6 +5,7 @@ import { TasksI } from "contexts/useActions/types";
 import { useActions } from "contexts/useActions/useActions";
 
 import * as S from "./styles";
+import dayjs from "dayjs";
 
 interface EditModalI {
   open: boolean;
@@ -16,6 +17,13 @@ const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
   const [form] = Form.useForm();
   const { user, loadingUpdateTask, getEpics, updateTask, getTasks } =
     useActions();
+
+  const selectOptions = user.epics.map((epic) => {
+    return {
+      value: epic.id,
+      label: epic.name,
+    };
+  });
 
   const onFinish = async (values: {
     name: string;
@@ -29,7 +37,7 @@ const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
       description: values.description,
       inProgress: task.inProgress,
       dueDate: values.dueDate,
-      epic: values.epic,
+      epicId: values.epic,
     });
 
     if (updated) {
@@ -47,7 +55,7 @@ const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
       form.setFields([
         { name: "name", value: task.name },
         { name: "description", value: task.description },
-        { name: "dueDate", value: task.dueDate },
+        { name: "dueDate", value: dayjs(task.dueDate) },
       ]);
     }
   }, [open]);
@@ -90,7 +98,7 @@ const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
           <DatePicker placeholder="Selecionar" />
         </Form.Item>
         <Form.Item name="epic" label="Épico">
-          <Select options={user.epics} />
+          <Select options={selectOptions} />
         </Form.Item>
       </Form>
     </S.Wrapper>

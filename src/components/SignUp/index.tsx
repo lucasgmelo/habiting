@@ -35,7 +35,7 @@ const SignUp = () => {
       localStorage.setItem("user", JSON.stringify(data));
       localStorage.setItem("token", data.oauthToken);
 
-      router.push("/default");
+      router.push("/home");
     },
   });
 

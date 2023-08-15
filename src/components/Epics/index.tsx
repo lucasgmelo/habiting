@@ -28,8 +28,8 @@ const Epics = () => {
               key={epic.name}
               name={epic.name}
               description={epic.description}
-              current={epic.current}
-              total={epic.total}
+              tasksDone={epic.tasksDone}
+              totalTasks={epic.totalTasks}
               onClick={() => router.push(`/epic/${epic.name}`)}
             />
           ))}

@@ -10,18 +10,22 @@ interface EpicCardI extends EpicsI {
 const EpicCard: FC<EpicCardI> = ({
   name,
   description,
-  current,
-  total,
+  totalTasks,
+  tasksDone,
   onClick,
-}) => (
-  <S.Wrapper onClick={onClick}>
-    <h4>{name}</h4>
-    <p>{description}</p>
-    <span>
-      {current.toString()}/{total.toString()}
-    </span>
-    <Progress percent={Number((current / total).toFixed(2)) * 100} />
-  </S.Wrapper>
-);
+}) => {
+  console.log(tasksDone, totalTasks);
+
+  return (
+    <S.Wrapper onClick={onClick}>
+      <h4>{name}</h4>
+      <p>{description}</p>
+      <span>
+        {tasksDone}/{totalTasks?.toString() || "0"}
+      </span>
+      <Progress percent={Number((tasksDone / totalTasks).toFixed(2)) * 100} />
+    </S.Wrapper>
+  );
+};
 
 export default EpicCard;

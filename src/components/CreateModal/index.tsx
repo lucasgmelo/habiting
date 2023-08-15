@@ -36,7 +36,7 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
 
   const [currentEpic, setCurrentEpic] = useState("");
   const [tasksInEpic, setTasksInEpic] = useState(
-    user.tasks.filter((task) => task.epic === currentEpic)
+    user.tasks.filter((task) => task.epicId === currentEpic)
   );
   const [tasksAvailable, setTasksAvailable] = useState<TasksI[]>(
     user.tasks.filter((task) => !tasksInEpic.includes(task))
@@ -90,7 +90,16 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
     deadline: string;
     another: boolean;
   }) => {
-    createEpic(values.taskname, values.description);
+    const tasksInEpicDone = tasksInEpic.filter(
+      (task) => task.inProgress === true
+    );
+
+    createEpic(
+      values.taskname,
+      values.description,
+      tasksInEpicDone.length,
+      tasksInEpic.length
+    );
 
     form.resetFields();
     if (!createAnother) {
@@ -152,7 +161,7 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 },
               ]}
             >
-              <Input placeholder="Descrição da tarefa (opcional)" />
+              <Input placeholder="Descrição da tarefa" />
             </Form.Item>
 
             <Form.Item label="Prazo final" name="deadline">
@@ -229,12 +238,18 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
               />
             </Form.Item>
 
-            <Form.Item label="Descrição" name="description">
-              <Input placeholder="Descrição do épico (opcional)" />
-            </Form.Item>
-
-            <Form.Item label="Prazo final" name="deadline">
-              <DatePicker placeholder="Selecionar data" format={dateFormat} />
+            <Form.Item
+              label="Descrição"
+              name="description"
+              required
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor, insira o nome do épico.",
+                },
+              ]}
+            >
+              <Input placeholder="Descrição do épico" />
             </Form.Item>
 
             <h1>Vincular tarefas ao épico</h1>

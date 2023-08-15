@@ -6,15 +6,16 @@ export interface TasksI {
   description?: string;
   inProgress: boolean;
   dueDate?: string;
-  epic: null | string;
+  epicId: null | string;
   userId?: string;
 }
 
 export interface EpicsI {
+  id: null | string;
   name: string;
   description?: string;
-  current: number;
-  total: number;
+  tasksDone: number;
+  totalTasks: number;
 }
 
 export interface UserI {
@@ -45,8 +46,18 @@ export interface ActionsContextData {
   updateTask: (task: TasksI) => Promise<boolean>;
   getEpic: (id: string | string[] | undefined) => void;
   getEpics: () => void;
-  createEpic: (name: string, description?: string) => void;
-  createTask: (name: string, description?: string, deadline?: string) => void;
+  createEpic: (
+    name: string,
+    description: string,
+    tasksDone: number,
+    totalTasks: number
+  ) => void;
+  createTask: (
+    name: string,
+    description?: string,
+    deadline?: string,
+    epicId?: string
+  ) => void;
   deleteTask: (name: string) => Promise<boolean>;
   toggleTask: (name: string, newStatus: boolean) => void;
 }
