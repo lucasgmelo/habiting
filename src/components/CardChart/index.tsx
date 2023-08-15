@@ -21,7 +21,7 @@ const CardChart: FC<CardChartI> = ({ current, total }) => {
     },
     {
       type: "A realizar",
-      value: total - current || 1,
+      value: total - current,
     },
   ];
 

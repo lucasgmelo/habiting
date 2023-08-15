@@ -91,7 +91,6 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
     another: boolean;
   }) => {
     createEpic(values.taskname, values.description);
-    console.log(values, tasksInEpic);
 
     form.resetFields();
     if (!createAnother) {
@@ -142,7 +141,17 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
               <Input placeholder="Nome da tarefa" />
             </Form.Item>
 
-            <Form.Item label="Descrição" name="description">
+            <Form.Item
+              label="Descrição"
+              name="description"
+              required
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor, insira a descrição da tarefa.",
+                },
+              ]}
+            >
               <Input placeholder="Descrição da tarefa (opcional)" />
             </Form.Item>
 
@@ -151,7 +160,7 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
             </Form.Item>
 
             <Form.Item name="epic" label="Épico">
-              <Select options={selectOptions} />
+              <Select options={selectOptions} allowClear />
             </Form.Item>
 
             <div className="footer">
@@ -310,7 +319,10 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   return (
     <S.Wrapper
       open={open}
-      onCancel={closeModal}
+      onCancel={() => {
+        form.resetFields();
+        closeModal();
+      }}
       cancelText="Cancelar"
       footer={null}
       width={600}

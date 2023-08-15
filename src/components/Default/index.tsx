@@ -1,7 +1,7 @@
 import ProgressModal from "components/ProgressModal";
 import TaskCard from "components/TaskCard";
 import { useActions } from "contexts/useActions/useActions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as S from "./styles";
 import { TasksI } from "contexts/useActions/types";
 import ProgressCard from "components/ProgressCard";
@@ -10,7 +10,11 @@ import CardIcon from "components/CardIcon";
 import { Fire, Lightbulb } from "@styled-icons/remix-fill";
 
 const Default = () => {
-  const { user, details } = useActions();
+  const { user, details, getTasks } = useActions();
+
+  useEffect(() => {
+    getTasks();
+  }, []);
 
   // const [formattedActions, setFormattedActions] = useState<GeneralActionI[]>(
   //   () => {
@@ -70,15 +74,10 @@ const Default = () => {
 
   const sortTasks = (actions: typeof formattedTasks) => {
     return actions.sort((a, b) => {
-      if (a.status && !b.status) return 1;
-      if (!a.status && b.status) return -1;
+      if (a.inProgress && !b.inProgress) return 1;
+      if (!a.inProgress && b.inProgress) return -1;
       return 0;
     });
-  };
-
-  const generalAnalytics = {
-    actionsDone: user.tasks.filter((action) => action.status === true).length,
-    totalActions: user.tasks.length,
   };
 
   // const onClickProgress = (action: TasksI) => {
@@ -86,11 +85,10 @@ const Default = () => {
   //   setIsProgressModalOpen(true);
   // };
 
-  const username = () => {
-    if (typeof window === "undefined") return "";
-
-    return JSON.parse(localStorage.getItem("user") || "{}").username;
-  };
+  const username =
+    typeof window === "undefined"
+      ? ""
+      : JSON.parse(localStorage.getItem("user") || "{}").username;
 
   return (
     <S.Wrapper>
@@ -102,18 +100,15 @@ const Default = () => {
       /> */}
 
       <S.Title>
-        Olá, <span>{username()}</span>. {details.salutation}
+        Olá, <span>{username}</span>. {details.salutation}
       </S.Title>
       <S.Subtitle>{details.day}</S.Subtitle>
       <S.WidgetGrid>
-        <CardChart
-          current={generalAnalytics.actionsDone}
-          total={generalAnalytics.totalActions}
-        />
+        <CardChart current={user.actionsDone} total={user.totalActions} />
         <CardIcon IconComponent={<Fire />} bgColor="#E83F5B">
           <S.WidgetBigTitle>
-            Você concluiu um total de <span>8 tarefas</span>
-            <br /> nos últimos 7 dias
+            Você já concluiu um total de <span>{user.actionsDone}</span>{" "}
+            tarefas!
           </S.WidgetBigTitle>
           <S.WidgetDescription>
             Ser consistente é mais importante do que ser apenas produtivo
@@ -121,10 +116,11 @@ const Default = () => {
         </CardIcon>
         <CardIcon IconComponent={<Lightbulb />} bgColor="#FFC779">
           <S.WidgetBigTitle>
-            Você possui 7 tarefas com prazo para hoje
+            Você possui {user.totalActions - user.actionsDone} com prazos
+            próximos
           </S.WidgetBigTitle>
           <S.WidgetBigTitle>
-            <span>Monitore seus hábitos</span>
+            <span>Monitore suas ações!</span>
           </S.WidgetBigTitle>
         </CardIcon>
       </S.WidgetGrid>

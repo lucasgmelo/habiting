@@ -21,7 +21,9 @@ const defaultUser: UserI = {
   name: "",
   photo: "",
   tasks: [],
-  epics: [{ name: "123", description: "123", current: 0, total: 0 }],
+  epics: [],
+  totalActions: 0,
+  actionsDone: 0,
 };
 
 export function ActionsProvider({
@@ -43,6 +45,7 @@ export function ActionsProvider({
   const [loadingCreatingTask, setLoadingCreatingTask] = useState(false);
   const [loadingEpics, setLoadingEpics] = useState(false);
   const [loadingCreatingEpic, setLoadingCreatingEpic] = useState(false);
+  const [loadingDeleteTask, setLoadingDeleteTask] = useState(false);
   const [loadingUpdateTask, setLoadingUpdateTask] = useState(false);
 
   const [loadingEpic, setLoadingEpic] = useState(false);
@@ -62,7 +65,12 @@ export function ActionsProvider({
 
       const { data } = await api.get("/tasks");
 
-      setUser({ ...user, tasks: data });
+      const actionsDone = data.filter(
+        (action: { inProgress: boolean }) => action.inProgress === true
+      ).length;
+      const totalActions = data.length;
+
+      setUser({ ...user, tasks: data, actionsDone, totalActions });
     } catch {
       message.error("Erro ao localizar tasks");
     } finally {
@@ -81,7 +89,7 @@ export function ActionsProvider({
         id: null,
         name,
         description,
-        status: false,
+        inProgress: false,
         dueDate: deadline,
         epic: null,
       };
@@ -103,15 +111,18 @@ export function ActionsProvider({
     }
   };
 
-  const deleteTask = (name: string) => {
-    const newTasks: TasksI[] = user.tasks.filter((task) => task.name !== name);
+  const deleteTask = async (id: string) => {
+    try {
+      setLoadingDeleteTask(true);
 
-    const newUserData = {
-      ...user,
-      tasks: newTasks,
-    };
+      await api.delete(`/tasks/${id}`);
 
-    setUser(newUserData);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setLoadingDeleteTask(false);
+    }
   };
 
   const toggleTask = (name: string, newStatus: boolean) => {
@@ -131,6 +142,7 @@ export function ActionsProvider({
     const newUserData = {
       ...user,
       tasks: newTasks,
+      actionsDone: newStatus ? user.actionsDone + 1 : user.actionsDone - 1,
     };
 
     setUser(newUserData);
@@ -189,21 +201,21 @@ export function ActionsProvider({
 
   const updateTask = async (task: TasksI) => {
     try {
-      setLoadingCreatingTask(true);
+      setLoadingUpdateTask(true);
 
       const newTask = {
         ...task,
-        inProgress: task.status,
+        inProgress: task.inProgress,
         epicId: task.epic,
       };
 
-      const { data } = await api.put(`/tasks/${task.id}`, newTask);
+      await api.put(`/tasks/${task.id}`, newTask);
 
-      console.log(data);
+      return true;
     } catch {
-      console.error("erro");
+      return false;
     } finally {
-      setLoadingCreatingTask(false);
+      setLoadingUpdateTask(false);
     }
   };
 
@@ -233,6 +245,7 @@ export function ActionsProvider({
         loadingTasks,
         loadingCreatingTask,
         loadingCreatingEpic,
+        loadingDeleteTask,
         getEpic,
         getEpics,
         getTasks,

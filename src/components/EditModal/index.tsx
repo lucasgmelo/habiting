@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import { Button, DatePicker, Form, Input, Select } from "antd";
+import { Button, DatePicker, Form, Input, Select, message } from "antd";
 
 import { TasksI } from "contexts/useActions/types";
 import { useActions } from "contexts/useActions/useActions";
@@ -14,21 +14,31 @@ interface EditModalI {
 
 const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
   const [form] = Form.useForm();
-  const { user, getEpics, updateTask } = useActions();
+  const { user, loadingUpdateTask, getEpics, updateTask, getTasks } =
+    useActions();
 
-  const onFinish = (values: {
+  const onFinish = async (values: {
     name: string;
     description: string;
     dueDate: string;
     epic: string;
   }) => {
-    updateTask({
+    const updated = await updateTask({
       id: task.id,
       name: values.name,
       description: values.description,
-      status: task.status,
+      inProgress: task.inProgress,
+      dueDate: values.dueDate,
       epic: values.epic,
     });
+
+    if (updated) {
+      getTasks();
+      closeModal();
+      return message.success("Editado com sucesso!");
+    }
+
+    return message.error("Não foi possível editar");
   };
 
   useEffect(() => {
@@ -37,6 +47,7 @@ const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
       form.setFields([
         { name: "name", value: task.name },
         { name: "description", value: task.description },
+        { name: "dueDate", value: task.dueDate },
       ]);
     }
   }, [open]);
@@ -47,7 +58,12 @@ const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
       onCancel={closeModal}
       title="Editar tarefa"
       footer={[
-        <Button type="primary" htmlType="submit" onClick={() => form.submit()}>
+        <Button
+          type="primary"
+          htmlType="submit"
+          onClick={() => form.submit()}
+          loading={loadingUpdateTask}
+        >
           OK
         </Button>,
       ]}

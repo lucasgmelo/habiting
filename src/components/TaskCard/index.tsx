@@ -2,7 +2,7 @@ import Checkbox from "components/Checkbox";
 import { FC, useState } from "react";
 import { formatStringToDate, formatStringToDeadline } from "utils/formatters";
 import * as S from "./styles";
-import { Button, message } from "antd";
+import { Button, Popconfirm, message } from "antd";
 import { DeleteBin4, Edit } from "@styled-icons/remix-line";
 import { useActions } from "contexts/useActions/useActions";
 import EditModal from "components/EditModal";
@@ -13,14 +13,14 @@ interface TaskCardI {
 }
 
 const TaskCard: FC<TaskCardI> = ({ task }) => {
-  const { deleteTask, toggleTask, updateTask } = useActions();
-  const [checked, setChecked] = useState(task?.status || false);
+  const { deleteTask, toggleTask, updateTask, getTasks } = useActions();
+  const [checked, setChecked] = useState(task?.inProgress || false);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const onCheck = () => {
     toggleTask(task?.name, !checked);
-    updateTask({ ...task, status: !task.status });
+    updateTask({ ...task, inProgress: !task.inProgress });
     setChecked(!checked);
   };
 
@@ -39,7 +39,7 @@ const TaskCard: FC<TaskCardI> = ({ task }) => {
             : false
         }
       >
-        {task?.dueDate !== undefined && (
+        {task?.dueDate !== null && (
           <p className="deadline">
             até {formatStringToDeadline(String(task?.dueDate))}
           </p>
@@ -48,19 +48,25 @@ const TaskCard: FC<TaskCardI> = ({ task }) => {
         <button className="edit" onClick={() => setIsEditModalOpen(true)}>
           <Edit size={16} />
         </button>
-        <button
-          className="delete"
-          onClick={() => {
+        <Popconfirm
+          title="Deletar tarefa"
+          description="Tem certeza que quer deletar?"
+          onConfirm={() => {
             deleteTask(task?.name);
             message.success("Tarefa deletada com sucesso!");
           }}
+          onCancel={() => {}}
+          okText="Sim"
+          cancelText="Não"
         >
-          <DeleteBin4 size={16} />
-        </button>
+          <button className="delete">
+            <DeleteBin4 size={16} />
+          </button>
+        </Popconfirm>
       </S.FloatingContainer>
       <S.Group>
         <Checkbox
-          defaultChecked={task?.status}
+          defaultChecked={task?.inProgress}
           checked={checked}
           onChange={onCheck}
         />

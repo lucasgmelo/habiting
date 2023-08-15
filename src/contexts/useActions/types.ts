@@ -4,7 +4,7 @@ export interface TasksI {
   id: string | null;
   name: string;
   description?: string;
-  status: boolean;
+  inProgress: boolean;
   dueDate?: string;
   epic: null | string;
   userId?: string;
@@ -22,6 +22,8 @@ export interface UserI {
   photo: string;
   tasks: TasksI[];
   epics: EpicsI[];
+  actionsDone: number;
+  totalActions: number;
 }
 
 export interface ActionsContextData {
@@ -37,14 +39,15 @@ export interface ActionsContextData {
   loadingEpics: boolean;
   loadingCreatingTask: boolean;
   loadingUpdateTask: boolean;
+  loadingDeleteTask: boolean;
   loadingCreatingEpic: boolean;
   getTasks: () => void;
-  updateTask: (task: TasksI) => void;
+  updateTask: (task: TasksI) => Promise<boolean>;
   getEpic: (id: string | string[] | undefined) => void;
   getEpics: () => void;
   createEpic: (name: string, description?: string) => void;
   createTask: (name: string, description?: string, deadline?: string) => void;
-  deleteTask: (name: string) => void;
+  deleteTask: (name: string) => Promise<boolean>;
   toggleTask: (name: string, newStatus: boolean) => void;
 }
 

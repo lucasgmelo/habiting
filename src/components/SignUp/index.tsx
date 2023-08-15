@@ -16,6 +16,7 @@ const SignUp = () => {
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
+      console.log(tokenResponse);
 
       const userInfo = await axios
         .get("https://www.googleapis.com/oauth2/v3/userinfo", {
@@ -23,14 +24,13 @@ const SignUp = () => {
         })
         .then((res) => res.data);
 
-
-      let googleInfos = ({
+      const googleInfos = {
         username: userInfo.name,
         email: userInfo.email,
-        password: userInfo.email
-      })
+        password: userInfo.email,
+      };
 
-      const {data} = await api.post("/users", googleInfos)
+      const { data } = await api.post("/googleLogin", googleInfos);
 
       localStorage.setItem("user", JSON.stringify(data));
       localStorage.setItem("token", data.oauthToken);

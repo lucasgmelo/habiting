@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Wrapper = styled.div<{ checked: boolean }>`
   opacity: ${({ checked }) => (checked ? 0.8 : 1)};
 
-  padding: 24px 16px;
+  padding: 32px 16px;
 
   width: 100%;
   background: ${({ theme }) => theme.colors.white};
