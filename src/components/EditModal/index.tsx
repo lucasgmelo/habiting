@@ -37,7 +37,6 @@ const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
       description: values.description,
       inProgress: task.inProgress,
       dueDate: values.dueDate,
-      epicId: values.epic,
     });
 
     if (updated) {
@@ -51,7 +50,6 @@ const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
 
   useEffect(() => {
     if (open) {
-      getEpics();
       form.setFields([
         { name: "name", value: task.name },
         { name: "description", value: task.description },
@@ -97,9 +95,7 @@ const EditModal: FC<EditModalI> = ({ open, task, closeModal }) => {
         <Form.Item name="dueDate" label="Novo prazo">
           <DatePicker placeholder="Selecionar" />
         </Form.Item>
-        <Form.Item name="epic" label="Épico">
-          <Select options={selectOptions} />
-        </Form.Item>
+
       </Form>
     </S.Wrapper>
   );

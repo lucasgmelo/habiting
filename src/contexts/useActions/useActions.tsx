@@ -63,7 +63,7 @@ export function ActionsProvider({
     try {
       setLoadingTasks(true);
 
-      const { data } = await api.get("/tasks");
+      const { data } = await api.get("/api/tasks");
 
       const actionsDone = data.filter(
         (action: { inProgress: boolean }) => action.inProgress === true
@@ -82,7 +82,6 @@ export function ActionsProvider({
     name: string,
     description?: string,
     deadline?: string,
-    epicId?: string
   ) => {
     try {
       setLoadingCreatingTask(true);
@@ -92,10 +91,9 @@ export function ActionsProvider({
         description,
         inProgress: false,
         dueDate: deadline,
-        epicId: epicId || null,
       };
 
-      const { data } = await api.post("/tasks", newTask);
+      const { data } = await api.post("/api/tasks", newTask);
 
       const newUserData = {
         ...user,
@@ -116,7 +114,7 @@ export function ActionsProvider({
     try {
       setLoadingDeleteTask(true);
 
-      await api.delete(`/tasks/${id}`);
+      await api.delete(`/api/tasks/${id}`);
 
       return true;
     } catch {
@@ -212,10 +210,9 @@ export function ActionsProvider({
       const newTask = {
         ...task,
         inProgress: task.inProgress,
-        epicId: task.epicId,
       };
 
-      await api.put(`/tasks/${task.id}`, newTask);
+      await api.put(`/api/tasks/${task.id}`, newTask);
 
       return true;
     } catch {

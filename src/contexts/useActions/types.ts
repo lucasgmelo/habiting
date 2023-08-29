@@ -6,7 +6,6 @@ export interface TasksI {
   description?: string;
   inProgress: boolean;
   dueDate?: string;
-  epicId: null | string;
   userId?: string;
 }
 
@@ -55,8 +54,7 @@ export interface ActionsContextData {
   createTask: (
     name: string,
     description?: string,
-    deadline?: string,
-    epicId?: string
+    deadline?: string
   ) => void;
   deleteTask: (name: string) => Promise<boolean>;
   toggleTask: (name: string, newStatus: boolean) => void;

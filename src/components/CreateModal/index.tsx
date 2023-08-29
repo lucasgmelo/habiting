@@ -57,7 +57,6 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   useEffect(() => {
     if (open) {
       getTasks();
-      getEpics();
     }
     if (!open) {
       setTasksInEpic([]);
@@ -166,10 +165,6 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
 
             <Form.Item label="Prazo final" name="deadline">
               <DatePicker placeholder="Selecionar data" />
-            </Form.Item>
-
-            <Form.Item name="epic" label="Épico">
-              <Select options={selectOptions} allowClear />
             </Form.Item>
 
             <div className="footer">

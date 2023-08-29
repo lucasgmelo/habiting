@@ -51,8 +51,9 @@ const TaskCard: FC<TaskCardI> = ({ task }) => {
         <Popconfirm
           title="Deletar tarefa"
           description="Tem certeza que quer deletar?"
-          onConfirm={() => {
-            deleteTask(task?.name);
+          onConfirm={ async () => {
+            await deleteTask(task?.id!);
+            await getTasks();
             message.success("Tarefa deletada com sucesso!");
           }}
           onCancel={() => {}}

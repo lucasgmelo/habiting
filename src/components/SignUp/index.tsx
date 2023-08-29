@@ -16,21 +16,8 @@ const SignUp = () => {
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      console.log(tokenResponse);
 
-      const userInfo = await axios
-        .get("https://www.googleapis.com/oauth2/v3/userinfo", {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        })
-        .then((res) => res.data);
-
-      const googleInfos = {
-        username: userInfo.name,
-        email: userInfo.email,
-        password: userInfo.email,
-      };
-
-      const { data } = await api.post("/googleLogin", googleInfos);
+      const {data} = await api.post("/auth/users/googleLogin", tokenResponse.access_token)
 
       localStorage.setItem("user", JSON.stringify(data));
       localStorage.setItem("token", data.oauthToken);
@@ -57,7 +44,7 @@ const SignUp = () => {
         password,
       };
 
-      const { data } = await api.post("/users", body);
+      const { data } = await api.post("/auth/users", body);
 
       const token = data.oAuthToken;
       localStorage.setItem("authToken", token);

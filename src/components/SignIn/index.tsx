@@ -7,12 +7,24 @@ import { useRouter } from "next/router";
 
 import { Button, Form, Input, message } from "antd";
 import Link from "next/dist/client/link";
-
+import { useGoogleLogin } from "@react-oauth/google";
 import { GoogleLogo } from "./assets/google";
 
 const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+
+      const {data} = await api.post("/auth/users/googleLogin", tokenResponse.access_token)
+
+      localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("token", data.oauthToken);
+
+      router.push("/home");
+    },
+  });
 
   const onSubmit = async (values: { email: string; password: string }) => {
     try {
@@ -25,7 +37,7 @@ const SignIn = () => {
         password,
       };
 
-      const { data } = await api.post("/users/signin", body);
+      const { data } = await api.post("/auth/users/signin", body);
 
       localStorage.setItem("token", data.oauthToken);
       localStorage.setItem("user", JSON.stringify(data));
@@ -45,7 +57,7 @@ const SignIn = () => {
         <p>Insira suas credenciais para acessar sua conta</p>
         <S.Container>
           <S.Buttons>
-            <Button block size="large">
+            <Button block size="large" onClick={login}>
               <GoogleLogo />
               Entrar com o Google
             </Button>
