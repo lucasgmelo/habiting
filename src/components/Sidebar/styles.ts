@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 export const Wrapper = styled.nav`
   position: fixed;
 
-  width: 300px;
+  width: 225px;
   padding: 32px 0;
 
   display: flex;

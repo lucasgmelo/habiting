@@ -1,48 +1,29 @@
 import { ReactNode } from "react";
 
-export interface GoalI {
-  name: string;
-  description?: string;
-  deadline: string;
-  current: number;
-  total: number;
-}
-
 export interface TasksI {
+  id: string | null;
   name: string;
   description?: string;
-  status: boolean;
-  deadline?: string;
-  dateDone: null | string;
+  inProgress: boolean;
+  dueDate?: string;
+  userId?: string;
 }
 
-export interface HabitI {
+export interface EpicsI {
+  id: null | string;
   name: string;
   description?: string;
-  dayAssigned: string;
-  timesADay: number;
+  tasksDone: number;
+  totalTasks: number;
 }
 
-export interface TrackI {
-  goals: GoalI[];
-  habits: HabitI[];
-}
-
-export interface GeneralActionI {
-  title: string;
-  progress: number;
-  total: number;
-  progressPercent: number;
-  text: string;
-}
 export interface UserI {
   name: string;
   photo: string;
-  startDate: string;
-  endDate: string;
-  goals: GoalI[];
-  habits: HabitI[];
   tasks: TasksI[];
+  epics: EpicsI[];
+  actionsDone: number;
+  totalActions: number;
 }
 
 export interface ActionsContextData {
@@ -52,10 +33,30 @@ export interface ActionsContextData {
     todayKey: string;
   };
   user: UserI;
-  tracker: Map<string, TrackI>;
-  createGoal: (name: string, repetitions: string, description?: string) => void;
-  createTask: (name: string, description?: string, deadline?: string) => void;
-  deleteTask: (name: string) => void;
+  epic: EpicsI | undefined;
+  loadingTasks: boolean;
+  loadingEpic: boolean;
+  loadingEpics: boolean;
+  loadingCreatingTask: boolean;
+  loadingUpdateTask: boolean;
+  loadingDeleteTask: boolean;
+  loadingCreatingEpic: boolean;
+  getTasks: () => void;
+  updateTask: (task: TasksI) => Promise<boolean>;
+  getEpic: (id: string | string[] | undefined) => void;
+  getEpics: () => void;
+  createEpic: (
+    name: string,
+    description: string,
+    tasksDone: number,
+    totalTasks: number
+  ) => void;
+  createTask: (
+    name: string,
+    description?: string,
+    deadline?: string
+  ) => void;
+  deleteTask: (name: string) => Promise<boolean>;
   toggleTask: (name: string, newStatus: boolean) => void;
 }
 

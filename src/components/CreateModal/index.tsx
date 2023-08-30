@@ -1,8 +1,18 @@
-import { FC, Fragment, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import * as S from "./styles";
-import { Button, Checkbox, DatePicker, Form, Input, message } from "antd";
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Form,
+  Input,
+  Select,
+  message,
+} from "antd";
 import { useActions } from "contexts/useActions/useActions";
-import { formatStringToDeadline } from "utils/formatters";
+import { dateFromIsoToApi, formatStringToDeadline } from "utils/formatters";
+import { ArrowRight } from "@styled-icons/remix-line";
+import { TasksI } from "contexts/useActions/types";
 
 interface CreateModalI {
   open: boolean;
@@ -12,17 +22,60 @@ interface CreateModalI {
 
 const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   const [form] = Form.useForm();
-  const { createGoal, createTask, user } = useActions();
+  const {
+    createTask,
+    createEpic,
+    getTasks,
+    getEpics,
+    loadingCreatingTask,
+    loadingCreatingEpic,
+    user,
+  } = useActions();
   const [createAnother, setCreateAnother] = useState(false);
   const dateFormat = "DD/MM/YYYY";
+
+  const [currentEpic, setCurrentEpic] = useState("");
+  const [tasksInEpic, setTasksInEpic] = useState(
+    user.tasks.filter((task) => task.epicId === currentEpic)
+  );
+  const [tasksAvailable, setTasksAvailable] = useState<TasksI[]>(
+    user.tasks.filter((task) => !tasksInEpic.includes(task))
+  );
+
+  const addNewTaskInEpic = (newTask: TasksI) => {
+    setTasksInEpic([...tasksInEpic, newTask]);
+    setTasksAvailable(tasksAvailable.filter((task) => task.id !== newTask.id));
+  };
+
+  const removeNewTaskInEpic = (deleteTask: TasksI) => {
+    const newTasks = tasksInEpic.filter((task) => task.id === deleteTask.id);
+
+    setTasksInEpic(newTasks);
+    setTasksAvailable(user.tasks.filter((task) => !newTasks.includes(task)));
+  };
+
+  useEffect(() => {
+    if (open) {
+      getTasks();
+    }
+    if (!open) {
+      setTasksInEpic([]);
+      setTasksAvailable(user.tasks);
+    }
+  }, [open]);
 
   const onSubmitTask = (values: {
     taskname: string;
     description: string;
-    deadline: string;
+    deadline: { ["$d"]: Date };
     another: boolean;
   }) => {
-    createTask(values.taskname, values.description, values.deadline);
+    createTask(
+      values.taskname,
+      values.description,
+
+      values.deadline && dateFromIsoToApi(values.deadline["$d"].toISOString())
+    );
     form.resetFields();
     if (!createAnother) {
       closeModal();
@@ -30,19 +83,36 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
     }
   };
 
-  const onSubmitGoal = (values: {
-    goalname: string;
+  const onSubmitEpic = (values: {
+    taskname: string;
     description: string;
-    repetitions: string;
+    deadline: string;
     another: boolean;
   }) => {
-    createGoal(values.goalname, values.repetitions, values.description);
+    const tasksInEpicDone = tasksInEpic.filter(
+      (task) => task.inProgress === true
+    );
+
+    createEpic(
+      values.taskname,
+      values.description,
+      tasksInEpicDone.length,
+      tasksInEpic.length
+    );
+
     form.resetFields();
     if (!createAnother) {
       closeModal();
-      message.success("Meta criada com sucesso!");
+      message.success("Épico criado com sucesso!");
     }
   };
+
+  const selectOptions = user.epics.map((epic) => {
+    return {
+      value: epic.name,
+      label: epic.name,
+    };
+  });
 
   const renderContent = () => {
     if (createMode === "task")
@@ -79,12 +149,22 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
               <Input placeholder="Nome da tarefa" />
             </Form.Item>
 
-            <Form.Item label="Descrição" name="description">
-              <Input placeholder="Descrição da tarefa (opcional)" />
+            <Form.Item
+              label="Descrição"
+              name="description"
+              required
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor, insira a descrição da tarefa.",
+                },
+              ]}
+            >
+              <Input placeholder="Descrição da tarefa" />
             </Form.Item>
 
             <Form.Item label="Prazo final" name="deadline">
-              <DatePicker placeholder="Selecionar data" format={dateFormat} />
+              <DatePicker placeholder="Selecionar data" />
             </Form.Item>
 
             <div className="footer">
@@ -103,7 +183,11 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 >
                   Cancelar
                 </Button>
-                <Button htmlType="submit" type="primary">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  loading={loadingCreatingTask}
+                >
                   Criar
                 </Button>
               </div>
@@ -112,31 +196,29 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
         </Fragment>
       );
 
-    if (createMode === "goal")
+    if (createMode === "epic")
       return (
         <Fragment>
-          <h1>Criar meta</h1>
+          <h1>Criar épico</h1>
           <h3>
-            Ideal para monitorar seus objetivos. Se encaixa bem com ações que
-            possuem um marco tangível de finalização.
-            <br />
-            ex: ir 200x na academia, ler 12 livros, investir 1000 reais...
+            Específico para agrupar tarefas e acompanhar o progresso de um
+            grande objetivo
           </h3>
 
-          <Form layout="vertical" form={form} onFinish={onSubmitGoal}>
+          <Form layout="vertical" form={form} onFinish={onSubmitEpic}>
             <Form.Item
               label="Nome"
-              name="goalname"
+              name="taskname"
               required
               rules={[
                 {
                   required: true,
-                  message: "Por favor, insira o nome da meta.",
+                  message: "Por favor, insira o nome do épico.",
                 },
                 {
-                  message: "Já existe uma meta com esse nome",
+                  message: "Já existe um épico com esse nome",
                   validator: (_: unknown, value: string) => {
-                    if (user.goals.find((goal) => goal.name === value)) {
+                    if (user.tasks.find((task) => task.name === value)) {
                       return Promise.reject();
                     }
 
@@ -145,45 +227,81 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 },
               ]}
             >
-              <Input placeholder="Nome da meta" />
-            </Form.Item>
-
-            <Form.Item label="Descrição" name="description">
-              <Input placeholder="Descrição da meta (opcional)" />
+              <Input
+                placeholder="Nome do épico"
+                onChange={(event) => setCurrentEpic(event.target.value)}
+              />
             </Form.Item>
 
             <Form.Item
-              label="Repetições"
-              name="repetitions"
+              label="Descrição"
+              name="description"
               required
               rules={[
                 {
                   required: true,
-                  message: "Por favor, insira a quantidade de repetições.",
+                  message: "Por favor, insira o nome do épico.",
                 },
               ]}
             >
-              <Input
-                type="number"
-                min={1}
-                placeholder="Vezes que a ação será realizada"
-              />
+              <Input placeholder="Descrição do épico" />
             </Form.Item>
 
-            <p>
-              O seu prazo final para esse perfil é{" "}
-              <span className="detail">
-                {formatStringToDeadline(user.endDate)}
-              </span>
-              , crie metas factíveis!
-            </p>
+            <h1>Vincular tarefas ao épico</h1>
+            <h3>
+              Adicione tarefas existentes a esse épico, você também pode fazer
+              isso mais tarde. Cada tarefa só pode pertencer a um épico.
+            </h3>
+
+            <S.Columns>
+              <div>
+                <p>Adicionadas</p>
+                <S.TaskContainer>
+                  {tasksInEpic.map((task) => (
+                    <S.Task>
+                      <div>
+                        <p>{task.name}</p>
+                        <p>{task.description}</p>
+                      </div>
+                      <S.ArrowButton
+                        included
+                        type="button"
+                        onClick={() => removeNewTaskInEpic(task)}
+                      >
+                        <ArrowRight size={16} />
+                      </S.ArrowButton>
+                    </S.Task>
+                  ))}
+                </S.TaskContainer>
+              </div>
+              <div>
+                <p>Disponíveis</p>
+                <S.TaskContainer>
+                  {tasksAvailable.map((task) => (
+                    <S.Task>
+                      <div>
+                        <p>{task.name}</p>
+                        <p>{task.description}</p>
+                      </div>
+                      <S.ArrowButton
+                        included={false}
+                        type="button"
+                        onClick={() => addNewTaskInEpic(task)}
+                      >
+                        <ArrowRight size={16} />
+                      </S.ArrowButton>
+                    </S.Task>
+                  ))}
+                </S.TaskContainer>
+              </div>
+            </S.Columns>
 
             <div className="footer">
               <Checkbox
                 checked={createAnother}
                 onChange={() => setCreateAnother(!createAnother)}
               >
-                Criar outra meta
+                Criar outro épico
               </Checkbox>
               <div className="buttons">
                 <Button
@@ -194,7 +312,11 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
                 >
                   Cancelar
                 </Button>
-                <Button htmlType="submit" type="primary">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  loading={loadingCreatingEpic}
+                >
                   Criar
                 </Button>
               </div>
@@ -207,9 +329,13 @@ const CreateModal: FC<CreateModalI> = ({ open, createMode, closeModal }) => {
   return (
     <S.Wrapper
       open={open}
-      onCancel={closeModal}
+      onCancel={() => {
+        form.resetFields();
+        closeModal();
+      }}
       cancelText="Cancelar"
       footer={null}
+      width={600}
     >
       {renderContent()}
     </S.Wrapper>

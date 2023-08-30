@@ -12,12 +12,12 @@ interface CardChartI {
 }
 
 const CardChart: FC<CardChartI> = ({ current, total }) => {
-  const progressPercent = current / total;
+  const progressPercent = current / total || 0;
 
   const data = [
     {
       type: "Realizado",
-      value: current,
+      value: current || 0,
     },
     {
       type: "A realizar",
@@ -46,23 +46,23 @@ const CardChart: FC<CardChartI> = ({ current, total }) => {
           fontSize: 18,
           fontWeight: 400,
         },
-        content: `${Number((current / total) * 100).toFixed()}%`,
+        content: `${Number(progressPercent * 100).toFixed()}%`,
       },
     },
   };
 
   const content = {
     done: {
-      title: "Parabéns! Você finalizou por hoje",
+      title: "Parabéns! Você finalizou suas tarefas da semana",
       text: "Todas as tarefas foram feitas",
     },
     well: {
       title: "Você está indo bem!",
-      text: `Complete ${total - current} tarefas para cumprir a meta diária`,
+      text: `Complete ${total - current} tarefas para cumprir a meta semanal`,
     },
     start: {
-      title: "Hoje pode ser um dia incrível!",
-      text: `Complete ${total - current} tarefas para cumprir a meta diária`,
+      title: "A semana pode ser incrível!",
+      text: `Complete ${total - current} tarefas para cumprir a meta semanal`,
     },
   };
 

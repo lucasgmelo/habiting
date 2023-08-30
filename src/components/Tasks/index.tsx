@@ -1,24 +1,29 @@
 import TaskCard from "components/TaskCard";
 import { useActions } from "contexts/useActions/useActions";
 import * as S from "./styles";
+import { useEffect, useState } from "react";
+import { Spin, message } from "antd";
+import api from "api";
 
 const Tasks = () => {
-  const { user } = useActions();
+  const { user, getTasks } = useActions();
+
+  const [loadingTasks, setLoadingTasks] = useState(false);
+
+  useEffect(() => {
+    getTasks();
+  }, []);
 
   return (
     <S.Wrapper>
       <h1>Suas tarefas</h1>
       <h2>Aqui é o lugar ideal para adicionar ações únicas de curto prazo</h2>
       <S.TasksGrid>
-        {user.tasks.map((task) => (
-          <TaskCard
-            key={task.name}
-            title={task.name}
-            initialStatus={task.status}
-            description={task.description}
-            deadline={task.deadline}
-          />
-        ))}
+        {loadingTasks ? (
+          <Spin />
+        ) : (
+          user.tasks.map((task) => <TaskCard key={task.name} task={task} />)
+        )}
       </S.TasksGrid>
     </S.Wrapper>
   );

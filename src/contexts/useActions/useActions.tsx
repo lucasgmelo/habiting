@@ -1,85 +1,34 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
-import {
-  ActionsProviderProps,
-  ActionsContextData,
-  UserI,
-  TrackI,
-  TasksI,
-  GoalI,
-  HabitI,
-} from "./types";
 import {
   dateFormatterText,
   getAppropriateSalutation,
   getTrackerKey,
 } from "utils/formatters";
+import {
+  ActionsContextData,
+  ActionsProviderProps,
+  EpicsI,
+  TasksI,
+  UserI,
+} from "./types";
+import api from "api";
+import { message } from "antd";
 
 export const ActionsContext = createContext({} as ActionsContextData);
 
 const defaultUser: UserI = {
-  name: "Lucas Melo",
-  photo:
-    "https://pbs.twimg.com/profile_images/1671136321299988483/WYECSKEe_400x400.jpg",
-  startDate: new Date("2023-06-19").toISOString(),
-  endDate: new Date("2023-07-19").toISOString(),
-  habits: [
-    {
-      name: "Tomar o remédio",
-      dayAssigned: "everyday",
-      timesADay: 1,
-    },
-    {
-      name: "Tomar o remédio",
-      dayAssigned: "everyday",
-      timesADay: 3,
-    },
-    {
-      name: "Bater o ponto",
-      dayAssigned: "everyday",
-      timesADay: 3,
-    },
-    {
-      name: "Não acumular tarefas - CIn",
-      dayAssigned: "everyday",
-      timesADay: 1,
-    },
-  ],
-  goals: [],
+  name: "",
+  photo: "",
   tasks: [],
-};
-
-const updateTracker = (
-  goals: GoalI[],
-  habits: HabitI[],
-  startDate: string,
-  endDate: string
-) => {
-  const map = new Map();
-
-  const startAsDate = new Date(startDate);
-  const endAsDate = new Date(endDate);
-
-  while (startAsDate <= endAsDate) {
-    const dateString = startAsDate.toISOString().split("T")[0];
-
-    const habitsAndGoals = {
-      goals,
-      habits,
-    };
-
-    map.set(dateString, habitsAndGoals);
-    startAsDate.setDate(startAsDate.getDate() + 1);
-  }
-
-  return map;
+  epics: [],
+  totalActions: 0,
+  actionsDone: 0,
 };
 
 export function ActionsProvider({
   children,
 }: ActionsProviderProps): JSX.Element {
-  const [tracker, setTracker] = useState(new Map());
-
   const [user, setUser] = useState<UserI>(() => {
     if (typeof window === "undefined") return defaultUser;
 
@@ -87,38 +36,20 @@ export function ActionsProvider({
       localStorage.getItem("storagedUser")!
     );
 
-    if (storagedUser) {
-      const storagedTracker = localStorage.getItem("tracker")!;
+    if (storagedUser) return storagedUser;
 
-      if (storagedTracker) {
-        const parsedTracker: Map<any, any> = JSON.parse(storagedTracker);
-        setTracker(parsedTracker);
-      } else {
-        setTracker(
-          updateTracker(
-            storagedUser.goals,
-            storagedUser.habits,
-            storagedUser.startDate,
-            storagedUser.endDate
-          )
-        );
-      }
-
-      // localStorage.setItem("storagedUser", JSON.stringify(storagedUser));
-      return storagedUser;
-    }
-
-    // localStorage.setItem("storagedUser", JSON.stringify(defaultUser));
-    setTracker(
-      updateTracker(
-        defaultUser.goals,
-        defaultUser.habits,
-        defaultUser.startDate,
-        defaultUser.endDate
-      )
-    );
     return defaultUser;
   });
+
+  const [loadingTasks, setLoadingTasks] = useState(false);
+  const [loadingCreatingTask, setLoadingCreatingTask] = useState(false);
+  const [loadingEpics, setLoadingEpics] = useState(false);
+  const [loadingCreatingEpic, setLoadingCreatingEpic] = useState(false);
+  const [loadingDeleteTask, setLoadingDeleteTask] = useState(false);
+  const [loadingUpdateTask, setLoadingUpdateTask] = useState(false);
+
+  const [loadingEpic, setLoadingEpic] = useState(false);
+  const [epic, setEpic] = useState<EpicsI>();
 
   const today = new Date();
 
@@ -128,36 +59,69 @@ export function ActionsProvider({
     todayKey: getTrackerKey(today),
   };
 
-  const createTask = (
-    name: string,
-    description?: string,
-    deadline?: string
-  ) => {
-    const newTask: TasksI = {
-      name,
-      description,
-      status: false,
-      deadline: deadline,
-      dateDone: null,
-    };
+  const getTasks = async () => {
+    try {
+      setLoadingTasks(true);
 
-    const newUserData = {
-      ...user,
-      tasks: [...user.tasks, newTask],
-    };
+      const { data } = await api.get("/api/tasks");
 
-    setUser(newUserData);
+      const actionsDone = data.filter(
+        (action: { inProgress: boolean }) => action.inProgress === true
+      ).length;
+      const totalActions = data.length;
+
+      setUser({ ...user, tasks: data, actionsDone, totalActions });
+    } catch {
+      message.error("Erro ao localizar tasks");
+    } finally {
+      setLoadingTasks(false);
+    }
   };
 
-  const deleteTask = (name: string) => {
-    const newTasks: TasksI[] = user.tasks.filter((task) => task.name !== name);
+  const createTask = async (
+    name: string,
+    description?: string,
+    deadline?: string,
+  ) => {
+    try {
+      setLoadingCreatingTask(true);
+      const newTask: TasksI = {
+        id: null,
+        name,
+        description,
+        inProgress: false,
+        dueDate: deadline,
+      };
 
-    const newUserData = {
-      ...user,
-      tasks: newTasks,
-    };
+      const { data } = await api.post("/api/tasks", newTask);
 
-    setUser(newUserData);
+      const newUserData = {
+        ...user,
+        tasks: [...user.tasks, data],
+      };
+
+      setUser(newUserData);
+    } catch {
+      message.error(
+        "Não foi possível criar a tarefa, tente novamente mais tarde"
+      );
+    } finally {
+      setLoadingCreatingTask(false);
+    }
+  };
+
+  const deleteTask = async (id: string) => {
+    try {
+      setLoadingDeleteTask(true);
+
+      await api.delete(`/api/tasks/${id}`);
+
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setLoadingDeleteTask(false);
+    }
   };
 
   const toggleTask = (name: string, newStatus: boolean) => {
@@ -177,54 +141,122 @@ export function ActionsProvider({
     const newUserData = {
       ...user,
       tasks: newTasks,
+      actionsDone: newStatus ? user.actionsDone + 1 : user.actionsDone - 1,
     };
 
     setUser(newUserData);
   };
 
-  const createGoal = (
+  const getEpics = async () => {
+    try {
+      setLoadingEpics(true);
+
+      const { data } = await api.get("/epics");
+
+      setUser({ ...user, epics: data });
+    } catch {
+      message.error("Erro ao carregar épicos");
+    } finally {
+      setLoadingEpics(false);
+    }
+  };
+
+  const createEpic = async (
     name: string,
-    repetitions: string,
-    description?: string
+    description: string,
+    tasksDone: number,
+    totalTasks: number
   ) => {
-    const newGoal: GoalI = {
-      name,
-      description,
-      total: Number(repetitions),
-      current: 0,
-      deadline: user.endDate,
-    };
+    try {
+      setLoadingCreatingEpic(true);
 
-    const newUserData: UserI = {
-      ...user,
-      goals: [...user.goals, newGoal],
-    };
+      const body = {
+        name,
+        description,
+        tasksDone,
+        totalTasks,
+      };
 
-    setUser(newUserData);
-    updateTracker(
-      [...user.goals, newGoal],
-      user.habits,
-      user.startDate,
-      user.endDate
-    );
+      const { data } = await api.post("/epics", body);
+
+      console.log(data);
+      setUser({ ...user, epics: [...user.epics, data] });
+    } catch {
+      message.error("Erro ao criar épico");
+    } finally {
+      setLoadingCreatingEpic(false);
+    }
   };
 
-  useEffect(() => {
-    localStorage.setItem("storagedUser", JSON.stringify(user));
-    localStorage.setItem("tracker", JSON.stringify(tracker));
-    updateTracker(user.goals, user.habits, user.startDate, user.endDate);
-  }, [user]);
+  const getEpic = async (id: string | string[] | undefined) => {
+    try {
+      setLoadingEpic(true);
+
+      const { data } = await api.get(`/epics/${id}`);
+
+      console.log(data);
+      setEpic(data);
+    } catch {
+      message.error("Erro ao ler épico");
+    } finally {
+      setLoadingEpic(false);
+    }
+  };
+
+  const updateTask = async (task: TasksI) => {
+    try {
+      setLoadingUpdateTask(true);
+
+      const newTask = {
+        ...task,
+        inProgress: task.inProgress,
+      };
+
+      await api.put(`/api/tasks/${task.id}`, newTask);
+
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setLoadingUpdateTask(false);
+    }
+  };
+
+  // const createEpic = async (userId: string) => {
+  //   try {
+  //     setLoadingEpics(true);
+
+  //     const { data } = await api.get("/epics");
+
+  //     console.log(data);
+  //   } catch {
+  //     message.error("Erro ao carregar épicos");
+  //   } finally {
+  //     setLoadingEpics(false);
+  //   }
+  // };
 
   return (
     <ActionsContext.Provider
       value={{
         user,
-        tracker,
+        epic,
         details,
+        loadingEpics,
+        loadingUpdateTask,
+        loadingEpic,
+        loadingTasks,
+        loadingCreatingTask,
+        loadingCreatingEpic,
+        loadingDeleteTask,
+        getEpic,
+        getEpics,
+        getTasks,
         createTask,
+        createEpic,
         deleteTask,
         toggleTask,
-        createGoal,
+        updateTask,
       }}
     >
       {children}

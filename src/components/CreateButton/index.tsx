@@ -12,7 +12,12 @@ const CreateButton: FC = () => {
     "task" | "habit" | "goal" | "epic"
   >("task");
 
-  if (router.pathname === "/perfil") return null;
+  if (
+    router.pathname === "/perfil" ||
+    router.pathname === "/cadastro" ||
+    router.pathname === "/login"
+  )
+    return null;
 
   const items: MenuProps["items"] = [
     {
@@ -24,34 +29,18 @@ const CreateButton: FC = () => {
       },
     },
     {
-      key: "2",
-      label: <p>Criar hábito</p>,
+      key: "4",
+      label: <p>Criar épico</p>,
       onClick: () => {
-        setCreateMode("habit");
+        setCreateMode("epic");
         setIsCreateModalOpen(true);
       },
     },
-    {
-      key: "3",
-      label: <p>Criar meta</p>,
-      onClick: () => {
-        setCreateMode("goal");
-        setIsCreateModalOpen(true);
-      },
-    },
-    // {
-    //   key: "4",
-    //   label: <p>Criar épico</p>,
-    //   onClick: () => {
-    //     setCreateMode("epic");
-    //     setIsCreateModalOpen(true);
-    //   },
-    // },
   ];
 
   return (
     <S.Wrapper>
-      <Dropdown menu={{ items }} trigger={["click"]}>
+      <Dropdown menu={{ items }} trigger={["click"]} placement="topLeft">
         <FloatButton icon={<Add />} type="primary" />
       </Dropdown>
 
